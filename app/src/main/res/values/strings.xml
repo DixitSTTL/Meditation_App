@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Meditation App</string>
+    <string name="home_tab">home</string>
+    <string name="tune_tab">tune</string>
+</resources>
