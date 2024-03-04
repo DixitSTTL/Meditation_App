@@ -10,17 +10,24 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.DrawerState
+import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberDrawerState
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -30,79 +37,96 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.app.meditation.R
+import com.app.meditation.ui.screen.AppDrawer
+import com.app.meditation.ui.screen.MainActions
 import com.app.meditation.ui.theme.GreenLight
 import com.app.meditation.ui.theme.MeditationAppTheme
 import com.app.meditation.ui.theme.White50
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun App(applicationContext: Context, finishActivity: () -> Unit) {
-
+fun App(
+    applicationContext: Context,
+    widthSizeClass: WindowWidthSizeClass,
+    finishActivity: () -> Unit
+) {
 
     MeditationAppTheme {
         val tabs = remember { AppTabs.entries.toTypedArray() }
-
+        val coroutineScope = rememberCoroutineScope()
         val navController = rememberNavController()
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentRoute = navBackStackEntry?.destination?.route ?: AppTabs.HOME.route
+        val navigationActions = remember(navController) {
+            MainActions(navController,applicationContext)
+        }
 
-        Scaffold(
-            contentColor = MaterialTheme.colorScheme.background,
-            topBar = {
-                CenterAlignedTopAppBar(title = {
+        val isExpandedScreen = widthSizeClass == WindowWidthSizeClass.Expanded
 
-                    /*    Text(
-                            text = "COVID-19 measures",
-                            style = TextStyle(
-                                fontSize = 16.sp, fontFamily = FontFamily(Font(R.font.rubik_medium))
-                            ),
-                            color = White_cl_90,
-                            modifier = Modifier.fillMaxWidth(),
-                            textAlign = TextAlign.Center
-                        )*/
-                    Image(
-                        modifier = Modifier.size(40.dp),
-                        painter = painterResource(id = R.drawable.ic_logo_large),
-                        contentDescription = ""
-                    )
+        val sizeAwareDrawerState = rememberSizeAwareDrawerState(isExpandedScreen)
 
-
-                },
-                    navigationIcon = {
-                    Icon(
-                        painter =painterResource(id = if (currentRoute==AppTabs.HOME.route)  R.drawable.ic_drawer else R.drawable.ic_back) ,
-                        contentDescription = "",
-                        modifier = Modifier
-                            .size(35.dp)
-                            .clip(CircleShape)
-                            .clickable {
-                                if (currentRoute==AppTabs.HOME.route){
-//                                    navController.popBackStack()
-                                }else{
-                                    navController.popBackStack()
-                                }
-//                                navigateBack()
-                            }
-                            .padding(5.dp)
-
-                    )
-                }, colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color.Transparent
-                )
-
+        ModalNavigationDrawer(
+            drawerContent = {
+                AppDrawer(
+                    currentRoute = currentRoute,
+                    navigateToMeditation = navigationActions.navigateToMeditation,
+                    navigateToTools = navigationActions.navigateToTools,
+                    navigateToSleep = navigationActions.navigateToSleep,
+                    closeDrawer = { coroutineScope.launch { sizeAwareDrawerState.close() } }
                 )
             },
-            bottomBar = {
-                BottomBar(navController = navController, tabs)
-            }
+            drawerState = sizeAwareDrawerState,
+            // Only enable opening the drawer via gestures if the screen is not expanded
+            gesturesEnabled = !isExpandedScreen && currentRoute == AppTabs.HOME.route
+        ) {
+            Scaffold(
+                contentColor = MaterialTheme.colorScheme.background,
+                topBar = {
+                    CenterAlignedTopAppBar(
+                        title = {
+                            Image(
+                                modifier = Modifier.size(40.dp),
+                                painter = painterResource(id = R.drawable.ic_logo_main),
+                                contentDescription = "",
+                            )
 
-        ) { innerPaddingModifier ->
-            NavGraph(
-                finishActivity = finishActivity,
-                navController = navController,
-                modifier = Modifier.padding(innerPaddingModifier),
-                applicationContext = applicationContext
-            )
+                        },
+                        navigationIcon = {
+                            Icon(
+                                painter = painterResource(id = if (currentRoute == AppTabs.HOME.route) R.drawable.ic_drawer else R.drawable.ic_back),
+                                contentDescription = "",
+                                modifier = Modifier
+                                    .size(35.dp)
+                                    .clip(CircleShape)
+                                    .clickable {
+                                        if (currentRoute == AppTabs.HOME.route) {
+                                            coroutineScope.launch { sizeAwareDrawerState.open() }
+                                        } else {
+                                            navController.popBackStack()
+                                        }
+                                    }
+                                    .padding(5.dp)
+
+                            )
+                        }, colors = TopAppBarDefaults.topAppBarColors(
+                            containerColor = Color.Transparent
+                        )
+
+                    )
+                },
+                bottomBar = {
+                    BottomBar(navController = navController, tabs)
+                }
+
+            ) { innerPaddingModifier ->
+                NavGraph(
+                    finishActivity = finishActivity,
+                    navController = navController,
+                    modifier = Modifier.padding(innerPaddingModifier),
+                    applicationContext = applicationContext
+                )
+            }
         }
     }
 }
@@ -110,7 +134,7 @@ fun App(applicationContext: Context, finishActivity: () -> Unit) {
 enum class AppTabs(
     @StringRes val title: Int, @DrawableRes val icon: Int, val route: String
 ) {
-    HOME(R.string.home_tab, R.drawable.ic_tab_home, TabDestinations.HOME_ROUTE),
+    HOME(R.string.home_tab, R.drawable.ic_logo_main, TabDestinations.HOME_ROUTE),
     TUNES(R.string.tune_tab, R.drawable.ic_tab_tunes, TabDestinations.TUNE_ROUTE),
     PROFILE(R.string.tune_tab, R.drawable.ic_tab_profile, TabDestinations.PROFILE_ROUTE)
 }
@@ -132,7 +156,7 @@ fun BottomBar(navController: NavController, tabs: Array<AppTabs>) {
                         Icon(
                             painter = painterResource(tab.icon),
                             contentDescription = null,
-                            modifier = Modifier,
+                            modifier = Modifier.size(26.dp),
                             tint = if (currentRoute == tab.route) Color.White else White50
                         )
                     },
@@ -156,5 +180,21 @@ fun BottomBar(navController: NavController, tabs: Array<AppTabs>) {
                 )
             }
         }
+    }
+}
+
+@Composable
+private fun rememberSizeAwareDrawerState(isExpandedScreen: Boolean): DrawerState {
+    val drawerState = rememberDrawerState(DrawerValue.Closed)
+
+    return if (!isExpandedScreen) {
+        // If we want to allow showing the drawer, we use a real, remembered drawer
+        // state defined above
+        drawerState
+    } else {
+        // If we don't want to allow the drawer to be shown, we provide a drawer state
+        // that is locked closed. This is intentionally not remembered, because we
+        // don't want to keep track of any changes and always keep it closed
+        DrawerState(DrawerValue.Closed)
     }
 }

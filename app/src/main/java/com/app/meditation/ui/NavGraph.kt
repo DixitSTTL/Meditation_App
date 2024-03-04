@@ -30,12 +30,16 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.app.meditation.ui.screen.MainActions
+import com.app.meditation.ui.screen.MainDestinations
 import com.app.meditation.ui.screen.dashbord.DashBoardScreen
+import com.app.meditation.ui.screen.meditation.MeditationScreen
 import com.app.meditation.ui.screen.player.PlayerScreen
 import com.app.meditation.ui.screen.profile.ProfileScreen
+import com.app.meditation.ui.screen.sleep.SleepScreen
+import com.app.meditation.ui.screen.tools.ToolsScreen
 import com.app.meditation.ui.screen.tuneList.DataTunes
 import com.app.meditation.ui.screen.tuneList.TuneListScreen
-import com.app.meditation.ui.util.JsonNavType
 import com.google.gson.Gson
 
 @Composable
@@ -52,7 +56,7 @@ fun NavGraph(
         mutableStateOf(!showOnboardingInitially)
     }
 
-    val actions = remember(navController) { MainActions(navController) }
+    val actions = remember(navController) { MainActions(navController, applicationContext) }
 
     NavHost(
         navController = navController,
@@ -65,7 +69,16 @@ fun NavGraph(
                 finishActivity()
             }
 
-            DashBoardScreen()
+            DashBoardScreen(
+                cardioClick = {
+                    actions.navigateCardio()
+
+                },
+                meditationClick = {
+                    actions.navigateMeditation()
+                }
+            )
+
         }
 
         composable(AppTabs.TUNES.route) {
@@ -78,8 +91,6 @@ fun NavGraph(
 
         }
 
-
-
         composable(AppTabs.PROFILE.route) { backStackEntry: NavBackStackEntry ->
             BackHandler {
                 actions.navigateBack()
@@ -90,16 +101,46 @@ fun NavGraph(
 
         }
 
+        composable(MainDestinations.MEDITATION_ROUTE) { backStackEntry: NavBackStackEntry ->
+            BackHandler {
+                actions.navigateBack()
+            }
+
+            MeditationScreen()
+
+        }
+
+        composable(MainDestinations.TOOLS_ROUTE) { backStackEntry: NavBackStackEntry ->
+            BackHandler {
+                actions.navigateBack()
+            }
+
+            ToolsScreen() {
+                actions.showToast(it.name)
+            }
+
+
+        }
+
+        composable(MainDestinations.SLEEP_ROUTE) { backStackEntry: NavBackStackEntry ->
+            BackHandler {
+                actions.navigateBack()
+            }
+
+            SleepScreen()
+
+        }
+
         composable(
-            route ="${MainDestinations.PLAYER_ROUTE}/{${MainDestinations.DATATTUNE_KEY}}",
+            route = "${MainDestinations.PLAYER_ROUTE}/{${MainDestinations.DATA_TUNE_KEY}}",
             arguments = listOf(
-                navArgument(MainDestinations.DATATTUNE_KEY) { type = DataTunesArgType() }
+                navArgument(MainDestinations.DATA_TUNE_KEY) { type = DataTunesArgType() }
             )
         ) { backStackEntry: NavBackStackEntry ->
 
             val arguments = requireNotNull(backStackEntry.arguments)
 
-            val dataTunes = arguments.getParcelable<DataTunes>(MainDestinations.DATATTUNE_KEY)
+            val dataTunes = arguments.getParcelable<DataTunes>(MainDestinations.DATA_TUNE_KEY)
 
             dataTunes?.let {
                 PlayerScreen(
@@ -113,33 +154,11 @@ fun NavGraph(
     }
 }
 
-object MainDestinations {
-    const val PLAYER_ROUTE = "playerRoute"
-    const val COURSE_DETAIL_ROUTE = "course"
-
-    const val DATATTUNE_KEY = "datattune_key"
-    const val SOURCE_KEY = "source_key"
-    const val DESTINATION_KEY = "destination_key"
-    const val DATE_KEY = "date_key"
-    const val CLASS_KEY = "class_key"
-    const val DATA_FLIGHTS_KEY = "data_flights_key"
-}
 
 /**
  * Models the navigation actions in the app.
  */
-class MainActions(navController: NavHostController) {
-    val navigateBack: () -> Unit = {
-        navController.popBackStack()
-    }
 
-    val navigatePlayer = { dataTune: DataTunes ->
-        // In order to discard duplicated navigation events, we check the Lifecycle
-        navController.navigate("${MainDestinations.PLAYER_ROUTE}/$dataTune")
-
-    }
-
-}
 
 object TabDestinations {
     const val HOME_ROUTE = "tab/home"

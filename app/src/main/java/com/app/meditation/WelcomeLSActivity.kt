@@ -8,7 +8,6 @@ import com.app.meditation.ui.WelcomeApp
 
 class WelcomeLSActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
-
         super.onCreate(savedInstanceState)
         setContent {
             WelcomeApp(

@@ -74,5 +74,7 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation("com.google.code.gson:gson:2.8.5")
     implementation(libs.androidx.core.splashscreen)
+    implementation(libs.androidx.window)
+    implementation(libs.androidx.compose.materialWindow)
 
 }

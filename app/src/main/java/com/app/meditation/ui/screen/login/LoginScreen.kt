@@ -38,7 +38,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.app.meditation.R
@@ -77,9 +76,9 @@ fun LoginScreen(navigateBack: () -> Unit, navigateSignUp: () -> Unit, navigateMa
             Spacer(modifier = Modifier.height(30.dp))
 
             Image(
-                painter = painterResource(id = R.drawable.ic_logo_large),
+                painter = painterResource(id = R.drawable.ic_logo_main),
                 contentDescription = "",
-                modifier = Modifier.size(60.dp)
+                modifier = Modifier.size(45.dp)
             )
 
             Spacer(modifier = Modifier.height(30.dp))

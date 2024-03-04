@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
@@ -34,6 +35,7 @@ class SplashActivity : ComponentActivity() {
 //            val splashScreen = installSplashScreen()
 //            splashScreen.setKeepOnScreenCondition { true }
 //        }
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
 //        setContentView(R.layout.activity_splash);
         setContent {
@@ -79,11 +81,11 @@ class SplashActivity : ComponentActivity() {
                 contentScale = ContentScale.Crop
             )
             Image(
-                painter = painterResource(id = R.drawable.ic_logo_large),
+                painter = painterResource(id = R.drawable.ic_logo_main),
                 contentDescription = "",
                 modifier = Modifier
                     .align(Alignment.Center)
-                    .size(300.dp)
+                    .size(150.dp)
             )
         }
 

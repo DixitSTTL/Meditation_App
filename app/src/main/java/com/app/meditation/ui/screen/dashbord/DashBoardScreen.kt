@@ -1,5 +1,7 @@
 package com.app.meditation.ui.screen.dashbord
 
+import android.content.Context
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -16,7 +18,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -29,7 +30,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.app.meditation.R
@@ -39,7 +39,10 @@ import com.app.meditation.ui.theme.White50
 import com.app.meditation.ui.theme.White90
 
 @Composable
-fun DashBoardScreen() {
+fun DashBoardScreen(
+    cardioClick: () -> Unit,
+    meditationClick: () -> Unit
+) {
     Column(
         modifier = Modifier
             .verticalScroll(rememberScrollState())
@@ -198,7 +201,8 @@ fun DashBoardScreen() {
         BannerItem(
             title = "Meditation 101",
             description = "Techniques, Benefits,\nand a Beginner’s How-To",
-            res = R.drawable.img_illu2
+            res = R.drawable.img_illu2,
+            onClick = meditationClick
         )
 
         Spacer(
@@ -210,7 +214,8 @@ fun DashBoardScreen() {
         BannerItem(
             title = "Cardio Meditation",
             description = "Basics of Yoga for Beginners\nor Experienced Professionals",
-            res = R.drawable.img_illu1
+            res = R.drawable.img_illu1,
+            onClick = cardioClick
         )
 
 
@@ -218,7 +223,7 @@ fun DashBoardScreen() {
 }
 
 @Composable
-fun BannerItem(title: String, description: String, res: Int) {
+fun BannerItem(title: String, description: String, res: Int, onClick: () -> Unit) {
 
     Box(
         modifier = Modifier
@@ -260,14 +265,16 @@ fun BannerItem(title: String, description: String, res: Int) {
                     .height(6.dp)
             )
 
-            Button(onClick = { /*TODO*/ },
+            Button(
+                onClick = {
+                    onClick() },
                 shape = RoundedCornerShape(12.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = GreenDark
                 )
             ) {
 
-                Row (verticalAlignment = Alignment.CenterVertically){
+                Row(verticalAlignment = Alignment.CenterVertically) {
 
                     Text(
                         text = "watch now",
