@@ -28,7 +28,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.app.meditation.R
-import com.app.meditation.ui.Constants.sleepList
+import com.app.meditation.common.Constants.sleepList
 
 @Composable
 fun SleepScreen() {

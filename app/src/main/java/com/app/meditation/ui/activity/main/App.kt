@@ -1,4 +1,4 @@
-package com.app.meditation.ui
+package com.app.meditation.ui.activity.main
 
 import android.content.Context
 import androidx.annotation.DrawableRes
@@ -22,7 +22,6 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDrawerState
-import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -37,6 +36,8 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.app.meditation.R
+import com.app.meditation.navigation.NavGraph
+import com.app.meditation.navigation.TabDestinations
 import com.app.meditation.ui.screen.AppDrawer
 import com.app.meditation.ui.screen.MainActions
 import com.app.meditation.ui.theme.GreenLight

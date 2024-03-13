@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -21,10 +22,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -40,6 +39,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.app.meditation.R
 import com.app.meditation.ui.theme.EdtColor
 import com.app.meditation.ui.theme.GreenLight
@@ -48,13 +48,18 @@ import com.app.meditation.ui.theme.White90
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginScreen(navigateBack: () -> Unit, navigateSignUp: () -> Unit, navigateMainActivity: () -> Unit) {
+fun LoginScreen(
+    navigateBack: () -> Unit,
+    navigateSignUp: () -> Unit,
+    navigateMainActivity: (String, String) -> Unit,
+    showToast: (String) -> Unit,
+    viewModel: LoginViewModel = hiltViewModel()
+) {
 
-    var mNameText by remember { mutableStateOf("") }
 
-    var mEmailText by remember { mutableStateOf("") }
+    val mEmailText by viewModel.mEmailText.collectAsState()
 
-    var mPassText by remember { mutableStateOf("") }
+    val mPassText by viewModel.mPassText.collectAsState()
 
 
     Box(
@@ -113,7 +118,7 @@ fun LoginScreen(navigateBack: () -> Unit, navigateSignUp: () -> Unit, navigateMa
                     fontFamily = FontFamily(Font(R.font.alegreya_regular))
                 ),
                 value = mEmailText, onValueChange = {
-                    mEmailText = it
+                    viewModel.mEmailText.value = it
                 },
                 label = {
                     Text(
@@ -125,7 +130,7 @@ fun LoginScreen(navigateBack: () -> Unit, navigateSignUp: () -> Unit, navigateMa
                 },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions.Default.copy(
-                    imeAction = ImeAction.Done, keyboardType = KeyboardType.Email
+                    imeAction = ImeAction.Next, keyboardType = KeyboardType.Email
                 ),
                 colors = TextFieldDefaults.textFieldColors(
                     cursorColor = EdtColor,
@@ -148,7 +153,7 @@ fun LoginScreen(navigateBack: () -> Unit, navigateSignUp: () -> Unit, navigateMa
                 ),
                 value = mPassText,
                 onValueChange = {
-                    mPassText = it
+                    viewModel.mPassText.value = it
                 },
                 label = {
                     Text(
@@ -163,6 +168,13 @@ fun LoginScreen(navigateBack: () -> Unit, navigateSignUp: () -> Unit, navigateMa
                 keyboardOptions = KeyboardOptions.Default.copy(
                     imeAction = ImeAction.Done, keyboardType = KeyboardType.Password
                 ),
+                keyboardActions = KeyboardActions(onDone = {
+
+                    if (viewModel.validation(showToast)){
+                        navigateMainActivity(mEmailText, mPassText)
+
+                    }
+                }),
                 colors = TextFieldDefaults.textFieldColors(
                     cursorColor = EdtColor,
                     containerColor = Color.Transparent,
@@ -179,7 +191,10 @@ fun LoginScreen(navigateBack: () -> Unit, navigateSignUp: () -> Unit, navigateMa
 
             Button(
                 onClick = {
-                    navigateMainActivity()
+                    if (viewModel.validation(showToast)){
+                        navigateMainActivity(mEmailText, mPassText)
+
+                    }
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -246,5 +261,5 @@ fun LoginScreen(navigateBack: () -> Unit, navigateSignUp: () -> Unit, navigateMa
 @Composable
 fun PreView() {
 
-    LoginScreen({}, {}, {})
+    LoginScreen({}, {}, { s, s2 -> }, {})
 }

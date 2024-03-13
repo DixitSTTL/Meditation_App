@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -21,10 +22,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -35,11 +34,13 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.app.meditation.R
 import com.app.meditation.ui.theme.EdtColor
 import com.app.meditation.ui.theme.GreenLight
@@ -48,13 +49,18 @@ import com.app.meditation.ui.theme.White90
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SignUpScreen(navigateBack: () -> Unit, navigateSignUp: () -> Unit) {
+fun SignUpScreen(
+    navigateBack: () -> Unit,
+    clickToSignUp: (String, String, String) -> Unit,
+    navigateSignUp: () -> Unit,
+    showToast: (String) -> Unit,
+    viewModel: SignUpViewModel = hiltViewModel()
+) {
+    val mEmailText by viewModel.mEmailText.collectAsState()
 
-    var mNameText by remember { mutableStateOf("") }
+    val mNameText by viewModel.mNameText.collectAsState()
 
-    var mEmailText by remember { mutableStateOf("") }
-
-    var mPassText by remember { mutableStateOf("") }
+    val mPassText by viewModel.mPassText.collectAsState()
 
 
     Box(
@@ -115,7 +121,7 @@ fun SignUpScreen(navigateBack: () -> Unit, navigateSignUp: () -> Unit) {
                 ),
                 value = mNameText,
                 onValueChange = {
-                    mNameText = it
+                    viewModel.mNameText.value = it
                 },
                 label = {
                     Text(
@@ -127,7 +133,7 @@ fun SignUpScreen(navigateBack: () -> Unit, navigateSignUp: () -> Unit) {
                 },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions.Default.copy(
-                    imeAction = ImeAction.Done, keyboardType = KeyboardType.Email
+                    imeAction = ImeAction.Next, keyboardType = KeyboardType.Text, capitalization = KeyboardCapitalization.Words
                 ),
                 colors = TextFieldDefaults.textFieldColors(
                     cursorColor = EdtColor,
@@ -149,7 +155,7 @@ fun SignUpScreen(navigateBack: () -> Unit, navigateSignUp: () -> Unit) {
                     fontFamily = FontFamily(Font(R.font.alegreya_regular))
                 ),
                 value = mEmailText, onValueChange = {
-                    mEmailText = it
+                    viewModel.mEmailText.value = it
                 },
                 label = {
                     Text(
@@ -161,7 +167,7 @@ fun SignUpScreen(navigateBack: () -> Unit, navigateSignUp: () -> Unit) {
                 },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions.Default.copy(
-                    imeAction = ImeAction.Done, keyboardType = KeyboardType.Email
+                    imeAction = ImeAction.Next, keyboardType = KeyboardType.Email
                 ),
                 colors = TextFieldDefaults.textFieldColors(
                     cursorColor = EdtColor,
@@ -184,7 +190,7 @@ fun SignUpScreen(navigateBack: () -> Unit, navigateSignUp: () -> Unit) {
                 ),
                 value = mPassText,
                 onValueChange = {
-                    mPassText = it
+                    viewModel.mPassText.value = it
                 },
                 label = {
                     Text(
@@ -199,6 +205,12 @@ fun SignUpScreen(navigateBack: () -> Unit, navigateSignUp: () -> Unit) {
                 keyboardOptions = KeyboardOptions.Default.copy(
                     imeAction = ImeAction.Done, keyboardType = KeyboardType.Password
                 ),
+                keyboardActions = KeyboardActions(onDone = {
+
+                    if (viewModel.validation(showToast)) {
+                        clickToSignUp(mNameText, mEmailText, mPassText)
+                    }
+                }),
                 colors = TextFieldDefaults.textFieldColors(
                     cursorColor = EdtColor,
                     containerColor = Color.Transparent,
@@ -215,7 +227,9 @@ fun SignUpScreen(navigateBack: () -> Unit, navigateSignUp: () -> Unit) {
 
             Button(
                 onClick = {
-
+                    if (viewModel.validation(showToast)) {
+                        clickToSignUp(mNameText, mEmailText, mPassText)
+                    }
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -281,7 +295,6 @@ fun SignUpScreen(navigateBack: () -> Unit, navigateSignUp: () -> Unit) {
 
 @Composable
 fun PreView() {
-
-    SignUpScreen({}, {})
+    SignUpScreen({}, { s, s2, s3 -> }, {}, {})
 }
 

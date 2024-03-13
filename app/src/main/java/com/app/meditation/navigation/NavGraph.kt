@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.app.meditation.ui
+package com.app.meditation.navigation
 
 import android.content.Context
 import android.os.Bundle
@@ -30,6 +30,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.app.meditation.ui.activity.main.AppTabs
 import com.app.meditation.ui.screen.MainActions
 import com.app.meditation.ui.screen.MainDestinations
 import com.app.meditation.ui.screen.dashbord.DashBoardScreen
@@ -96,8 +97,7 @@ fun NavGraph(
                 actions.navigateBack()
             }
 
-            ProfileScreen(
-            )
+            ProfileScreen()
 
         }
 

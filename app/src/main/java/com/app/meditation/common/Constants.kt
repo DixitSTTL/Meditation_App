@@ -1,4 +1,4 @@
-package com.app.meditation.ui
+package com.app.meditation.common
 
 import androidx.compose.ui.graphics.Color
 import com.app.meditation.R
@@ -9,6 +9,7 @@ import com.app.meditation.ui.screen.tuneList.DataTunes
 object Constants {
 
     val gradientWhiteColors = listOf(Color.White, Color.White)
+    const val PREF_NAME = "prefMeditation"
 
     enum class DateValidation {
         FUTURE_DATE,

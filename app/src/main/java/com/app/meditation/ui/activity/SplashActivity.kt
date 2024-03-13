@@ -1,4 +1,4 @@
-package com.app.meditation
+package com.app.meditation.ui.activity
 
 import android.content.Intent
 import android.os.Bundle
@@ -26,26 +26,35 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.lifecycleScope
+import com.app.meditation.R
+import com.app.meditation.ui.activity.main.MainActivity
+import com.app.meditation.ui.activity.welcome.WelcomeLSActivity
+import com.ctuil.intranet.businesslogic.preferences.UtilsSharedPreferences
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class SplashActivity : ComponentActivity() {
+
+    @Inject
+    lateinit var  shared: UtilsSharedPreferences
     override fun onCreate(savedInstanceState: Bundle?) {
 
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-//            val splashScreen = installSplashScreen()
-//            splashScreen.setKeepOnScreenCondition { true }
-//        }
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
-//        setContentView(R.layout.activity_splash);
         setContent {
             SetSplash()
 
         }
         lifecycleScope.launchWhenCreated {
             delay(3000)
+            val intent =
+                if (shared.getBooleanDefault(resources.getResourceName(R.string.user_login), false))
+                    Intent(this@SplashActivity, MainActivity::class.java)
+                else
+                    Intent(this@SplashActivity, WelcomeLSActivity::class.java)
 
-            val intent = Intent(this@SplashActivity, WelcomeLSActivity::class.java)
             startActivity(intent)
             finish()
         }
@@ -88,7 +97,6 @@ class SplashActivity : ComponentActivity() {
                     .size(150.dp)
             )
         }
-
 
     }
 }

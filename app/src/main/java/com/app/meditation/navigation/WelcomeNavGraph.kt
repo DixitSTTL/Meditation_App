@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package com.app.meditation.ui
+package com.app.meditation.navigation
 
 import android.content.Context
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -27,9 +28,11 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.app.meditation.R
 import com.app.meditation.ui.screen.login.LoginScreen
 import com.app.meditation.ui.screen.signUp.SignUpScreen
 import com.app.meditation.ui.screen.welcome.WelcomeScreen
+import com.ctuil.intranet.businesslogic.preferences.UtilsSharedPreferences
 
 @Composable
 fun WelcomeNavGraph(
@@ -39,14 +42,20 @@ fun WelcomeNavGraph(
     navController: NavHostController = rememberNavController(),
     startDestination: String = WelcomeDestinations.WELCOME_ROUTE,
     showOnboardingInitially: Boolean = true,
-    applicationContext: Context
+    applicationContext: Context,
 ) {
     // Onboarding could be read from shared preferences.
     val onboardingComplete = remember(showOnboardingInitially) {
         mutableStateOf(!showOnboardingInitially)
     }
 
-    val actions = remember(navController) { WelcomeActions(navController) }
+    val actions = remember(navController) {
+        WelcomeActions(
+            navController,
+            applicationContext,
+            navigateToMain
+        )
+    }
 
     NavHost(
         navController = navController,
@@ -74,18 +83,24 @@ fun WelcomeNavGraph(
                     actions.navigateSignUp()
                 },
 
-                navigateMainActivity= {
-                    navigateToMain()
-                })
+                navigateMainActivity = { mEmailText, mPassText ->
+                    actions.checkLogin(mEmailText, mPassText)
+                },
+                showToast = { str -> actions.showToast(str) }
+            )
 
 
         }
 
         composable(WelcomeDestinations.SIGNUP_ROUTE) { backStackEntry: NavBackStackEntry ->
-            SignUpScreen(navigateBack = {
-                actions.navigateBack()
-            },
-                navigateSignUp = { actions.navigateLogin() })
+            SignUpScreen(
+                navigateBack = { actions.navigateBack() },
+                navigateSignUp = { actions.navigateLogin() },
+                clickToSignUp = { mNameText, mEmailText, mPassText ->
+                    actions.navigateToLoginFromSignUp(mNameText, mEmailText, mPassText)
+                },
+                showToast = { text -> actions.showToast(text) }
+            )
 
         }
 
@@ -104,17 +119,65 @@ object WelcomeDestinations {
 /**
  * Models the navigation actions in the app.
  */
-class WelcomeActions(navController: NavHostController) {
+class WelcomeActions(
+    navController: NavHostController,
+    applicationContext: Context,
+    navigateToMain: () -> Unit
+) {
+
+    var shared = UtilsSharedPreferences(applicationContext)
+
     val navigateBack: () -> Unit = {
         navController.popBackStack()
+    }
+    val showToast = { it: String ->
+        Toast.makeText(applicationContext, it, Toast.LENGTH_SHORT).show()
+
     }
 
     val navigateLogin = {
         navController.navigate(WelcomeDestinations.LOGIN_ROUTE)
     }
 
+    val navigateToLoginFromSignUp = { mNameText: String, mEmailText: String, mPassText: String ->
+        shared.setString(
+            applicationContext.resources.getResourceName(R.string.user_name),
+            mNameText
+        )
+        shared.setString(
+            applicationContext.resources.getResourceName(R.string.user_email),
+            mEmailText
+        )
+        shared.setString(
+            applicationContext.resources.getResourceName(R.string.user_password),
+            mPassText
+        )
+        navController.navigate(WelcomeDestinations.LOGIN_ROUTE)
+    }
+
     val navigateSignUp = {
         navController.navigate(WelcomeDestinations.SIGNUP_ROUTE)
+    }
+
+    val checkLogin = { mEmailText: String, mPassText: String ->
+
+        if (
+            shared.getString(
+                applicationContext.resources.getResourceName(R.string.user_email)
+            ) == mEmailText
+            &&
+            shared.getString(
+                applicationContext.resources.getResourceName(R.string.user_password)
+            ) == mPassText
+        ) {
+            shared.setBoolean(applicationContext.resources.getResourceName(R.string.user_login), true)
+            showToast("Login successFully")
+            navigateToMain()
+
+        } else {
+            showToast("Login failed")
+        }
+
     }
 
 }

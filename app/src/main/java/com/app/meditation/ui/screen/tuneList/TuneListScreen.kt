@@ -32,7 +32,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.app.meditation.R
-import com.app.meditation.ui.Constants.musicList
+import com.app.meditation.common.Constants.musicList
 import com.app.meditation.ui.theme.White90
 
 @Composable

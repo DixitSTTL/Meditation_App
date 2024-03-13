@@ -28,11 +28,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.app.meditation.R
-import com.app.meditation.ui.Constants.toolList
+import com.app.meditation.common.Constants.toolList
 
 @Composable
 fun ToolsScreen(onClick: (DataTools) -> Unit) {
