@@ -41,6 +41,8 @@ import com.app.meditation.ui.screen.sleep.SleepScreen
 import com.app.meditation.ui.screen.tools.ToolsScreen
 import com.app.meditation.ui.screen.tuneList.DataTunes
 import com.app.meditation.ui.screen.tuneList.TuneListScreen
+import com.app.meditation.ui.screen.tuneList.TuneViewModel
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.gson.Gson
 
 @Composable
@@ -86,9 +88,14 @@ fun NavGraph(
             BackHandler {
                 actions.navigateBack()
             }
-            TuneListScreen { position ->
-                actions.navigatePlayer(position)
-            }
+            TuneListScreen(
+                dataTunes = { position ->
+                    actions.navigatePlayer(position)
+
+                }
+
+            )
+
 
         }
 

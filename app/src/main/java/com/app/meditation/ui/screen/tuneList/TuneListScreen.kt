@@ -1,5 +1,7 @@
 package com.app.meditation.ui.screen.tuneList
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -13,13 +15,17 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -31,18 +37,27 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import coil.compose.rememberImagePainter
 import com.app.meditation.R
-import com.app.meditation.common.Constants.musicList
 import com.app.meditation.ui.theme.White90
 
 @Composable
-fun TuneListScreen(dataTunes:(DataTunes) -> Unit) {
+fun TuneListScreen(dataTunes: (DataTunes) -> Unit, viewmodel: TuneViewModel = hiltViewModel()) {
+
+    val list by viewmodel.musicList.collectAsState()
+    val isLoading by viewmodel.isLoading.collectAsState()
+
+    LaunchedEffect(Unit) {
+//        viewmodel.getTunes()
+    }
 
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = 20.dp)
     ) {
+
         item {
 
             Spacer(
@@ -126,23 +141,37 @@ fun TuneListScreen(dataTunes:(DataTunes) -> Unit) {
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-
             }
         }
 
-        items(musicList) { item ->
+        item {
+            AnimatedVisibility(visible = isLoading, exit = fadeOut()) {
+
+                Box(modifier = Modifier.fillMaxWidth()) {
+                    CircularProgressIndicator(
+                        modifier = Modifier
+                            .size(40.dp)
+                            .align(Alignment.Center),
+                        color = Color.White
+                    )
+                }
+            }
+
+        }
+
+        itemsIndexed(list) { i, item ->
+
             TuneItem(item, dataTunes)
 
         }
 
-
     }
-
 
 }
 
 @Composable
 fun TuneItem(item: DataTunes, dataTunes: (DataTunes) -> Unit) {
+    val painter = rememberImagePainter(data = item.image)
 
     Row(verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
@@ -151,12 +180,13 @@ fun TuneItem(item: DataTunes, dataTunes: (DataTunes) -> Unit) {
                 dataTunes(item)
             }) {
         Image(
-            painter = painterResource(id = item.img),
+            painter = painter,
             contentDescription = item.name,
             modifier = Modifier
                 .size(80.dp)
                 .clip(shape = RoundedCornerShape(20)),
-            contentScale = ContentScale.Crop)
+            contentScale = ContentScale.Crop
+        )
 
         Spacer(modifier = Modifier.width(16.dp))
 
@@ -179,9 +209,10 @@ fun TuneItem(item: DataTunes, dataTunes: (DataTunes) -> Unit) {
                 )
             )
 
-
         }
+
         Spacer(modifier = Modifier.width(16.dp))
+
         Text(
             text = "${item.duration} Min",
             style = TextStyle(

@@ -97,4 +97,8 @@ dependencies {
     // LiveData
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.7.0")
 
+    //coil
+    implementation("io.coil-kt:coil-compose:2.4.0")
+
+
 }

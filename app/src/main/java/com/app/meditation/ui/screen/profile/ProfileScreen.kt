@@ -22,6 +22,8 @@ import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -36,6 +38,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.app.meditation.R
 import com.app.meditation.ui.theme.GreenDark
 import com.app.meditation.ui.theme.GreenLight
@@ -44,10 +47,13 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun ProfileScreen() {
+fun ProfileScreen(
+    mViewModel: ProfileViewModel = hiltViewModel()
+) {
     val pagerState = rememberPagerState(pageCount = { 2 })
     val titles = listOf("STATS", "ACHIEVEMENTS")
     val coroutineScope = rememberCoroutineScope()
+    val mUserName by mViewModel.mUserName.collectAsState()
 
     Column(
         modifier = Modifier
@@ -69,7 +75,7 @@ fun ProfileScreen() {
         Spacer(modifier = Modifier.height(30.dp))
 
         Text(
-            text = "Afreen Khan", color = Color.White, style = TextStyle(
+            text = mUserName, color = Color.White, style = TextStyle(
                 fontFamily = FontFamily(Font(R.font.alegreya_bold)), fontSize = 16.sp
             )
         )

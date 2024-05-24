@@ -38,6 +38,8 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import coil.compose.rememberImagePainter
 import com.app.meditation.R
 import com.app.meditation.ui.screen.tuneList.DataTunes
 import com.app.meditation.ui.theme.MyWhite
@@ -46,11 +48,12 @@ import com.app.meditation.ui.theme.White90
 import kotlinx.coroutines.delay
 
 @Composable
-fun PlayerScreen(dataTunes: DataTunes) {
+fun PlayerScreen(dataTunes: DataTunes, viewmodel: PlayerViewModel = hiltViewModel()) {
 
     var width by remember { mutableStateOf(0) }
     var part by remember { mutableStateOf(0) }
     var isLoaded by remember { mutableStateOf(false) }
+    val painter = rememberImagePainter(data = dataTunes.image)
 
     val offsetAnimation: Float by animateFloatAsState(
 
@@ -60,7 +63,7 @@ fun PlayerScreen(dataTunes: DataTunes) {
             durationMillis = 1500
         )
     )
-    LaunchedEffect(key1 = "") {
+    LaunchedEffect(dataTunes) {
         isLoaded = false
         delay(1000)
         isLoaded = true
@@ -75,7 +78,7 @@ fun PlayerScreen(dataTunes: DataTunes) {
         Spacer(modifier = Modifier.height(30.dp))
 
         Image(
-            painter = painterResource(id = dataTunes.img),
+            painter = painter,
             contentDescription = "",
             modifier = Modifier
                 .size(200.dp)
@@ -158,7 +161,10 @@ fun PlayerScreen(dataTunes: DataTunes) {
 
             }
 
-            Button(onClick = { /*TODO*/ }) {
+            Button(onClick = {
+
+                viewmodel.playAudio(dataTunes.link)
+            }) {
 
                 Icon(
                     painter = painterResource(id = R.drawable.ic_play),
@@ -196,14 +202,4 @@ fun PlayerScreen(dataTunes: DataTunes) {
     }
 
 
-}
-
-
-@Composable
-fun PreView() {
-    val dataTunes = DataTunes(
-        name = "The Hill Sides", listener = 3222, img = R.drawable.img_tune_5, duration = 42
-    )
-
-    PlayerScreen(dataTunes)
 }

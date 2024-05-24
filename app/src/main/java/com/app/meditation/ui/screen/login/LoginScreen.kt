@@ -51,7 +51,7 @@ import com.app.meditation.ui.theme.White90
 fun LoginScreen(
     navigateBack: () -> Unit,
     navigateSignUp: () -> Unit,
-    navigateMainActivity: (String, String) -> Unit,
+    navigateMainActivity: () -> Unit,
     showToast: (String) -> Unit,
     viewModel: LoginViewModel = hiltViewModel()
 ) {
@@ -170,8 +170,10 @@ fun LoginScreen(
                 ),
                 keyboardActions = KeyboardActions(onDone = {
 
-                    if (viewModel.validation(showToast)){
-                        navigateMainActivity(mEmailText, mPassText)
+                    if (viewModel.validation(showToast)) {
+                        if (viewModel.loginToApp()){
+                            navigateMainActivity()
+                        }
 
                     }
                 }),
@@ -191,8 +193,10 @@ fun LoginScreen(
 
             Button(
                 onClick = {
-                    if (viewModel.validation(showToast)){
-                        navigateMainActivity(mEmailText, mPassText)
+                    if (viewModel.validation(showToast)) {
+                        if (viewModel.loginToApp()){
+                            navigateMainActivity()
+                        }
 
                     }
                 },
@@ -261,5 +265,5 @@ fun LoginScreen(
 @Composable
 fun PreView() {
 
-    LoginScreen({}, {}, { s, s2 -> }, {})
+    LoginScreen({}, {}, {}, {})
 }

@@ -4,28 +4,35 @@ import android.net.Uri
 import android.os.Parcel
 import android.os.Parcelable
 import com.google.gson.Gson
+import java.io.Serializable
 
 data class DataTunes(
-    var name: String?,
-    var listener: Int,
-    var img: Int,
-    var duration: Int
-):Parcelable{
+    var name: String?="",
+    var listener: Int=0,
+    var image: String?="",
+    var duration: Int=0,
+    var link: String?=""
+) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readString(),
         parcel.readInt(),
+        parcel.readString(),
         parcel.readInt(),
-        parcel.readInt()
-    ) {
-    }
+        parcel.readString()
+    )
 
     override fun toString(): String = Uri.encode(Gson().toJson(this))
+
     override fun describeContents(): Int {
-        TODO("Not yet implemented")
+        return 0
     }
 
     override fun writeToParcel(dest: Parcel, flags: Int) {
-        TODO("Not yet implemented")
+        dest.writeString(name)
+        dest.writeInt(listener)
+        dest.writeString(image)
+        dest.writeInt(duration)
+        dest.writeString(link)
     }
 
     companion object CREATOR : Parcelable.Creator<DataTunes> {
@@ -37,5 +44,4 @@ data class DataTunes(
             return arrayOfNulls(size)
         }
     }
-
 }

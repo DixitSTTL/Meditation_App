@@ -83,8 +83,8 @@ fun WelcomeNavGraph(
                     actions.navigateSignUp()
                 },
 
-                navigateMainActivity = { mEmailText, mPassText ->
-                    actions.checkLogin(mEmailText, mPassText)
+                navigateMainActivity = {
+                    navigateToMain()
                 },
                 showToast = { str -> actions.showToast(str) }
             )
@@ -159,25 +159,5 @@ class WelcomeActions(
         navController.navigate(WelcomeDestinations.SIGNUP_ROUTE)
     }
 
-    val checkLogin = { mEmailText: String, mPassText: String ->
-
-        if (
-            shared.getString(
-                applicationContext.resources.getResourceName(R.string.user_email)
-            ) == mEmailText
-            &&
-            shared.getString(
-                applicationContext.resources.getResourceName(R.string.user_password)
-            ) == mPassText
-        ) {
-            shared.setBoolean(applicationContext.resources.getResourceName(R.string.user_login), true)
-            showToast("Login successFully")
-            navigateToMain()
-
-        } else {
-            showToast("Login failed")
-        }
-
-    }
 
 }

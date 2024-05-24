@@ -12,9 +12,6 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class WelcomeLSActivity : ComponentActivity() {
 
-    @Inject
-    lateinit var  shared: UtilsSharedPreferences
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
