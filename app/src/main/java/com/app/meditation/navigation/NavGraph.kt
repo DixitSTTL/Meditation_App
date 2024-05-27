@@ -19,10 +19,13 @@ package com.app.meditation.navigation
 import android.content.Context
 import android.os.Bundle
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -31,6 +34,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.app.meditation.ui.activity.main.AppTabs
+import com.app.meditation.ui.activity.main.AppViewModel
 import com.app.meditation.ui.screen.MainActions
 import com.app.meditation.ui.screen.MainDestinations
 import com.app.meditation.ui.screen.dashbord.DashBoardScreen
@@ -41,8 +45,6 @@ import com.app.meditation.ui.screen.sleep.SleepScreen
 import com.app.meditation.ui.screen.tools.ToolsScreen
 import com.app.meditation.ui.screen.tuneList.DataTunes
 import com.app.meditation.ui.screen.tuneList.TuneListScreen
-import com.app.meditation.ui.screen.tuneList.TuneViewModel
-import com.google.firebase.firestore.FirebaseFirestore
 import com.google.gson.Gson
 
 @Composable
@@ -52,113 +54,185 @@ fun NavGraph(
     navController: NavHostController = rememberNavController(),
     startDestination: String = AppTabs.HOME.route,
     showOnboardingInitially: Boolean = true,
-    applicationContext: Context
+    applicationContext: Context,
+    viewModel: AppViewModel = hiltViewModel()
+
 ) {
     // Onboarding could be read from shared preferences.
     val onboardingComplete = remember(showOnboardingInitially) {
         mutableStateOf(!showOnboardingInitially)
     }
-
+    val isVisible = viewModel.isVisible.collectAsState().value
+    val isPlaying = viewModel.isPlaying.collectAsState().value
+    val dataTunes = viewModel.dataTunes.collectAsState().value
     val actions = remember(navController) { MainActions(navController, applicationContext) }
 
-    NavHost(
-        navController = navController,
-        startDestination = startDestination,
-        modifier = modifier
-    ) {
-        composable(AppTabs.HOME.route) {
-            // Intercept back in Onboarding: make it finish the activity
-            BackHandler {
-                finishActivity()
-            }
 
-            DashBoardScreen(
-                cardioClick = {
-                    actions.navigateCardio()
+    Box(modifier = Modifier) {
+        NavHost(
+            navController = navController,
+            startDestination = startDestination,
+            modifier = modifier,
 
-                },
-                meditationClick = {
-                    actions.navigateMeditation()
+            ) {
+            composable(AppTabs.HOME.route) {
+                // Intercept back in Onboarding: make it finish the activity
+                BackHandler {
+                    finishActivity()
                 }
-            )
 
-        }
+                DashBoardScreen(
+                    cardioClick = {
+                        actions.navigateCardio()
 
-        composable(AppTabs.TUNES.route) {
-            BackHandler {
-                actions.navigateBack()
+                    },
+                    meditationClick = {
+                        actions.navigateMeditation()
+                    }
+                )
+
             }
-            TuneListScreen(
-                dataTunes = { position ->
+
+            composable(AppTabs.TUNES.route) {
+                BackHandler {
+                    actions.navigateBack()
+                }
+                TuneListScreen(
+                    dataTunes = { position ->
+//                        viewModel.setDataTune(position)
+//                        viewModel.prepareAudio()
                     actions.navigatePlayer(position)
 
+                    }
+
+                )
+
+
+            }
+
+            composable(AppTabs.PROFILE.route) { backStackEntry: NavBackStackEntry ->
+                BackHandler {
+                    actions.navigateBack()
                 }
 
+                ProfileScreen()
+
+            }
+
+            composable(MainDestinations.MEDITATION_ROUTE) { backStackEntry: NavBackStackEntry ->
+                BackHandler {
+                    actions.navigateBack()
+                }
+
+                MeditationScreen()
+
+            }
+
+            composable(MainDestinations.TOOLS_ROUTE) { backStackEntry: NavBackStackEntry ->
+                BackHandler {
+                    actions.navigateBack()
+                }
+
+                ToolsScreen() {
+                    actions.showToast(it.name)
+                }
+
+
+            }
+
+            composable(MainDestinations.SLEEP_ROUTE) { backStackEntry: NavBackStackEntry ->
+                BackHandler {
+                    actions.navigateBack()
+                }
+
+                SleepScreen()
+
+            }
+
+            composable(
+                route = "${MainDestinations.PLAYER_ROUTE}/{${MainDestinations.DATA_TUNE_KEY}}",
+                arguments = listOf(
+                    navArgument(MainDestinations.DATA_TUNE_KEY) { type = DataTunesArgType() }
+                )
+            ) { backStackEntry: NavBackStackEntry ->
+
+                val arguments = requireNotNull(backStackEntry.arguments)
+
+                val dataTunes = arguments.getParcelable<DataTunes>(MainDestinations.DATA_TUNE_KEY)
+
+                dataTunes?.let {
+                    PlayerScreen(
+                        it
+                    )
+                }
+
+            }
+
+
+        }
+
+/*
+        if (isVisible) {
+             Card(
+                 modifier = Modifier
+                     .fillMaxWidth()
+                     .align(Alignment.BottomCenter),
+            colors = CardDefaults.elevatedCardColors(
+                containerColor = Color.Cyan
             )
+        ) {
+
+            Row(verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .padding(0.dp, 12.dp)
+                    .clickable {
+//                                    dataTunes(item)
+                    }) {
+//                  Image(
+//                      painter = painter,
+//                      contentDescription = "item.name",
+//                      modifier = Modifier
+//                          .size(80.dp)
+//                          .clip(shape = RoundedCornerShape(20)),
+//                      contentScale = ContentScale.Crop
+//                  )
+
+                Spacer(modifier = Modifier.width(16.dp))
+
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = dataTunes.name.toString(),
+                        style = TextStyle(
+                            fontFamily = FontFamily(Font(R.font.alegreya_semi_bold)),
+                            fontSize = 16.sp,
+                            color = Color.White
+                        )
+                    )
 
 
-        }
+                }
 
-        composable(AppTabs.PROFILE.route) { backStackEntry: NavBackStackEntry ->
-            BackHandler {
-                actions.navigateBack()
-            }
+                Spacer(modifier = Modifier.width(16.dp))
 
-            ProfileScreen()
-
-        }
-
-        composable(MainDestinations.MEDITATION_ROUTE) { backStackEntry: NavBackStackEntry ->
-            BackHandler {
-                actions.navigateBack()
-            }
-
-            MeditationScreen()
-
-        }
-
-        composable(MainDestinations.TOOLS_ROUTE) { backStackEntry: NavBackStackEntry ->
-            BackHandler {
-                actions.navigateBack()
-            }
-
-            ToolsScreen() {
-                actions.showToast(it.name)
-            }
-
-
-        }
-
-        composable(MainDestinations.SLEEP_ROUTE) { backStackEntry: NavBackStackEntry ->
-            BackHandler {
-                actions.navigateBack()
-            }
-
-            SleepScreen()
-
-        }
-
-        composable(
-            route = "${MainDestinations.PLAYER_ROUTE}/{${MainDestinations.DATA_TUNE_KEY}}",
-            arguments = listOf(
-                navArgument(MainDestinations.DATA_TUNE_KEY) { type = DataTunesArgType() }
-            )
-        ) { backStackEntry: NavBackStackEntry ->
-
-            val arguments = requireNotNull(backStackEntry.arguments)
-
-            val dataTunes = arguments.getParcelable<DataTunes>(MainDestinations.DATA_TUNE_KEY)
-
-            dataTunes?.let {
-                PlayerScreen(
-                    it
+                Icon(
+                    painter = painterResource(
+                        id = if (isPlaying) {
+                            R.drawable.ic_pause
+                        } else {
+                            R.drawable.ic_play
+                        }
+                    ),
+                    contentDescription = "",
+                    tint = Color.White,
+                    modifier = Modifier.size(45.dp)
                 )
             }
-
         }
-
-
+        }
+*/
     }
+
+
 }
 
 

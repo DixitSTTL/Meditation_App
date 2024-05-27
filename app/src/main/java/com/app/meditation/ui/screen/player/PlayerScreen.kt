@@ -20,6 +20,7 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -55,6 +56,8 @@ fun PlayerScreen(dataTunes: DataTunes, viewmodel: PlayerViewModel = hiltViewMode
     var isLoaded by remember { mutableStateOf(false) }
     val painter = rememberImagePainter(data = dataTunes.image)
 
+    val isPlaying = viewmodel.isPlaying.collectAsState()
+
     val offsetAnimation: Float by animateFloatAsState(
 
         if (isLoaded) 20f else 200f,
@@ -65,6 +68,8 @@ fun PlayerScreen(dataTunes: DataTunes, viewmodel: PlayerViewModel = hiltViewMode
     )
     LaunchedEffect(dataTunes) {
         isLoaded = false
+        viewmodel.prepareAudio(dataTunes.link)
+
         delay(1000)
         isLoaded = true
 
@@ -124,9 +129,6 @@ fun PlayerScreen(dataTunes: DataTunes, viewmodel: PlayerViewModel = hiltViewMode
                 PathEffect.dashPathEffect(floatArrayOf(offsetAnimation, 20f), 10f)
 
 
-            for (i in 1..10) {
-
-            }
             drawLine(
                 color = White90,
                 start = Offset(0f, 0f),
@@ -163,11 +165,17 @@ fun PlayerScreen(dataTunes: DataTunes, viewmodel: PlayerViewModel = hiltViewMode
 
             Button(onClick = {
 
-                viewmodel.playAudio(dataTunes.link)
+                viewmodel.play_pause_Audio()
             }) {
 
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_play),
+                    painter = painterResource(
+                        id = if (isPlaying.value) {
+                            R.drawable.ic_pause
+                        } else {
+                            R.drawable.ic_play
+                        }
+                    ),
                     contentDescription = "",
                     tint = Color.White,
                     modifier = Modifier.size(45.dp)

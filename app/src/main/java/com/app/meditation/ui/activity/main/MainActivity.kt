@@ -15,9 +15,9 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             val widthSizeClass = calculateWindowSizeClass(this).widthSizeClass
-            App(applicationContext,widthSizeClass) {
+            App(applicationContext,widthSizeClass,{
                 finish()
-            }
+            })
         }
     }
 }

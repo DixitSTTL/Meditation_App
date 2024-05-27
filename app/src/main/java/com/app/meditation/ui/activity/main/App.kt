@@ -5,6 +5,8 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -50,7 +52,7 @@ import kotlinx.coroutines.launch
 fun App(
     applicationContext: Context,
     widthSizeClass: WindowWidthSizeClass,
-    finishActivity: () -> Unit
+    finishActivity: () -> Unit,
 ) {
 
     MeditationAppTheme {
@@ -60,12 +62,15 @@ fun App(
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentRoute = navBackStackEntry?.destination?.route ?: AppTabs.HOME.route
         val navigationActions = remember(navController) {
-            MainActions(navController,applicationContext)
+            MainActions(navController, applicationContext)
         }
 
         val isExpandedScreen = widthSizeClass == WindowWidthSizeClass.Expanded
 
         val sizeAwareDrawerState = rememberSizeAwareDrawerState(isExpandedScreen)
+
+
+//    val painter = rememberImagePainter(data = dataTunes.value.image)
 
         ModalNavigationDrawer(
             drawerContent = {
@@ -121,12 +126,19 @@ fun App(
                 }
 
             ) { innerPaddingModifier ->
-                NavGraph(
-                    finishActivity = finishActivity,
-                    navController = navController,
-                    modifier = Modifier.padding(innerPaddingModifier),
-                    applicationContext = applicationContext
-                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(innerPaddingModifier)
+                ) {
+
+                    NavGraph(
+                        finishActivity = finishActivity,
+                        navController = navController,
+                        applicationContext = applicationContext,
+                    )
+
+                }
             }
         }
     }
@@ -145,7 +157,7 @@ fun BottomBar(navController: NavController, tabs: Array<AppTabs>) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route ?: AppTabs.HOME.route
 
-    val routes = remember { AppTabs.values().map { it.route } }
+    val routes = remember { AppTabs.entries.map { it.route } }
     if (currentRoute in routes) {
 
         NavigationBar(containerColor = MaterialTheme.colorScheme.background) {
