@@ -1,5 +1,6 @@
 package com.app.meditation.ui.screen.player
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
@@ -15,6 +16,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
@@ -56,7 +58,8 @@ fun PlayerScreen(dataTunes: DataTunes, viewmodel: PlayerViewModel = hiltViewMode
     var isLoaded by remember { mutableStateOf(false) }
     val painter = rememberImagePainter(data = dataTunes.image)
 
-    val isPlaying = viewmodel.isPlaying.collectAsState()
+    val isPlaying = viewmodel.getIsPlaying().collectAsState().value
+    val isPrepared = viewmodel.getIsisPrepared().collectAsState().value
 
     val offsetAnimation: Float by animateFloatAsState(
 
@@ -68,8 +71,6 @@ fun PlayerScreen(dataTunes: DataTunes, viewmodel: PlayerViewModel = hiltViewMode
     )
     LaunchedEffect(dataTunes) {
         isLoaded = false
-        viewmodel.prepareAudio(dataTunes.link)
-
         delay(1000)
         isLoaded = true
 
@@ -163,25 +164,36 @@ fun PlayerScreen(dataTunes: DataTunes, viewmodel: PlayerViewModel = hiltViewMode
 
             }
 
-            Button(onClick = {
+            AnimatedVisibility(visible = isPrepared) {
+                Button(onClick = {
 
-                viewmodel.play_pause_Audio()
-            }) {
+                    viewmodel.play_pause_Audio()
+                }) {
 
-                Icon(
-                    painter = painterResource(
-                        id = if (isPlaying.value) {
-                            R.drawable.ic_pause
-                        } else {
-                            R.drawable.ic_play
-                        }
-                    ),
-                    contentDescription = "",
-                    tint = Color.White,
-                    modifier = Modifier.size(45.dp)
-                )
+                    Icon(
+                        painter = painterResource(
+                            id = if (isPlaying) {
+                                R.drawable.ic_pause
+                            } else {
+                                R.drawable.ic_play
+                            }
+                        ),
+                        contentDescription = "",
+                        tint = Color.White,
+                        modifier = Modifier.size(45.dp)
+                    )
 
+                }
             }
+
+            AnimatedVisibility(visible = !isPrepared) {
+                CircularProgressIndicator(
+                    modifier = Modifier,
+                    color = Color.White,
+                    strokeWidth = 2.dp
+                )
+            }
+
 
             Button(onClick = { /*TODO*/ }) {
 

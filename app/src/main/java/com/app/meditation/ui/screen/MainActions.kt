@@ -5,10 +5,15 @@ import android.content.Intent
 import android.net.Uri
 import android.widget.Toast
 import androidx.navigation.NavHostController
+import com.app.meditation.ui.activity.main.AppViewModel
 import com.app.meditation.ui.screen.tuneList.DataTunes
 
-class MainActions(navController: NavHostController,applicationContext: Context) {
-    val showToast= {it: String ->
+class MainActions(
+    navController: NavHostController,
+    applicationContext: Context,
+    appViewModel: AppViewModel
+) {
+    val showToast = { it: String ->
         Toast.makeText(applicationContext, it, Toast.LENGTH_SHORT).show()
 
     }
@@ -25,7 +30,7 @@ class MainActions(navController: NavHostController,applicationContext: Context) 
 
     }
     val navigateCardio = {
-        var intent = Intent()
+        val intent = Intent()
         intent.action = Intent.ACTION_VIEW
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         intent.data = Uri.parse("https://www.youtube.com/watch?v=QndOJ-cZ3n8");
@@ -33,7 +38,7 @@ class MainActions(navController: NavHostController,applicationContext: Context) 
 
     }
     val navigateMeditation = {
-        var intent = Intent()
+        val intent = Intent()
         intent.action = Intent.ACTION_VIEW
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         intent.data = Uri.parse("https://www.youtube.com/watch?v=SWDDUdevH7w");
@@ -47,6 +52,14 @@ class MainActions(navController: NavHostController,applicationContext: Context) 
     val navigateToSleep = {
         navController.navigate(MainDestinations.SLEEP_ROUTE)
 
+    }
+
+    val prepareAudio = { dataTune: DataTunes ->
+        appViewModel.prepareAudio(dataTune)
+    }
+
+    val setVisibilityOfPlayer = { bool: Boolean ->
+        appViewModel.setIsVisible(bool)
     }
 
 }

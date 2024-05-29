@@ -21,7 +21,6 @@ import android.os.Bundle
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -55,17 +54,16 @@ fun NavGraph(
     startDestination: String = AppTabs.HOME.route,
     showOnboardingInitially: Boolean = true,
     applicationContext: Context,
-    viewModel: AppViewModel = hiltViewModel()
+    appViewModel: AppViewModel = hiltViewModel()
 
 ) {
     // Onboarding could be read from shared preferences.
     val onboardingComplete = remember(showOnboardingInitially) {
         mutableStateOf(!showOnboardingInitially)
     }
-    val isVisible = viewModel.isVisible.collectAsState().value
-    val isPlaying = viewModel.isPlaying.collectAsState().value
-    val dataTunes = viewModel.dataTunes.collectAsState().value
-    val actions = remember(navController) { MainActions(navController, applicationContext) }
+
+    val actions =
+        remember(navController) { MainActions(navController, applicationContext,appViewModel) }
 
 
     Box(modifier = Modifier) {
@@ -98,11 +96,8 @@ fun NavGraph(
                     actions.navigateBack()
                 }
                 TuneListScreen(
-                    dataTunes = { position ->
-//                        viewModel.setDataTune(position)
-//                        viewModel.prepareAudio()
-                    actions.navigatePlayer(position)
-
+                    dataTunes = { dataTune ->
+                        actions.prepareAudio(dataTune)
                     }
 
                 )
@@ -165,71 +160,16 @@ fun NavGraph(
                         it
                     )
                 }
-
-            }
-
-
-        }
-
-/*
-        if (isVisible) {
-             Card(
-                 modifier = Modifier
-                     .fillMaxWidth()
-                     .align(Alignment.BottomCenter),
-            colors = CardDefaults.elevatedCardColors(
-                containerColor = Color.Cyan
-            )
-        ) {
-
-            Row(verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .padding(0.dp, 12.dp)
-                    .clickable {
-//                                    dataTunes(item)
-                    }) {
-//                  Image(
-//                      painter = painter,
-//                      contentDescription = "item.name",
-//                      modifier = Modifier
-//                          .size(80.dp)
-//                          .clip(shape = RoundedCornerShape(20)),
-//                      contentScale = ContentScale.Crop
-//                  )
-
-                Spacer(modifier = Modifier.width(16.dp))
-
-                Column(modifier = Modifier.weight(1f)) {
-                    Text(
-                        text = dataTunes.name.toString(),
-                        style = TextStyle(
-                            fontFamily = FontFamily(Font(R.font.alegreya_semi_bold)),
-                            fontSize = 16.sp,
-                            color = Color.White
-                        )
-                    )
-
+                BackHandler {
+                    actions.navigateBack()
+                    actions.setVisibilityOfPlayer(true)
 
                 }
 
-                Spacer(modifier = Modifier.width(16.dp))
-
-                Icon(
-                    painter = painterResource(
-                        id = if (isPlaying) {
-                            R.drawable.ic_pause
-                        } else {
-                            R.drawable.ic_play
-                        }
-                    ),
-                    contentDescription = "",
-                    tint = Color.White,
-                    modifier = Modifier.size(45.dp)
-                )
             }
+
         }
-        }
-*/
+
     }
 
 

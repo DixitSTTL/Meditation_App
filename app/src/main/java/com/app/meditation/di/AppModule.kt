@@ -2,6 +2,7 @@ package com.app.meditation.di
 
 import android.content.Context
 import com.app.MyApp
+import com.app.meditation.common.util.CustomMediaPlayer
 import com.ctuil.intranet.businesslogic.preferences.UtilsSharedPreferences
 import dagger.Module
 import dagger.Provides
@@ -12,7 +13,11 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object SharedPreferenceModule {
+object AppModule {
+
+    @Singleton
+    @Provides
+    fun provideMedialPlayerInstance(): CustomMediaPlayer = CustomMediaPlayer()
 
     @Singleton
     @Provides

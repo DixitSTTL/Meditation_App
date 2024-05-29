@@ -1,59 +1,40 @@
 package com.app.meditation.ui.screen.player
 
-import android.media.AudioManager
-import android.media.MediaPlayer
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import com.app.meditation.domain.usecase.GetPlayerUseCase
+import com.app.meditation.ui.screen.tuneList.DataTunes
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
-import java.io.IOException
 import javax.inject.Inject
 
 
 @HiltViewModel
-class PlayerViewModel @Inject constructor() : ViewModel() {
-    val mediaPlayer = MediaPlayer()
-
-    val isPlaying = MutableStateFlow(false)
-    fun prepareAudio(link: String?) {
-        viewModelScope.launch {
-            val audioUrl = link
-
-
-            // below line is use to set the audio
-            // stream type for our media player.
-            mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC)
-            // below line is use to set our
-            // url to our media player.
-            try {
-                mediaPlayer.setDataSource(audioUrl)
-
-                // below line is use to prepare
-                // and start our media player.
-                mediaPlayer.prepare()
-            } catch (e: IOException) {
-                e.printStackTrace()
-            }
-        }
-    }
+class PlayerViewModel @Inject constructor(var getPlayerUseCase: GetPlayerUseCase) : ViewModel() {
 
     fun play_pause_Audio() {
 
-        try {
-            if (isPlaying.value){
-                mediaPlayer.pause()
-            }
-            else{
-                mediaPlayer.start()
+        CoroutineScope(Dispatchers.IO).launch {
+            getPlayerUseCase.play_pause_Audio()
 
-            }
-            isPlaying.value = mediaPlayer.isPlaying
-        } catch (e: IOException) {
-            e.printStackTrace()
         }
 
         // below line is use to display a toast message.
+    }
+
+    fun getIsPlaying(): MutableStateFlow<Boolean> {
+        return getPlayerUseCase.getIsPlaying()
+    }
+    fun getIsVisible(): MutableStateFlow<Boolean> {
+        return getPlayerUseCase.getIsVisible()
+    }
+    fun getIsisPrepared(): MutableStateFlow<Boolean> {
+        return getPlayerUseCase.getIsisPrepared()
+    }
+    fun getDataTunes(): MutableStateFlow<DataTunes> {
+        return getPlayerUseCase.getIsDataTunes()
     }
 
 }
