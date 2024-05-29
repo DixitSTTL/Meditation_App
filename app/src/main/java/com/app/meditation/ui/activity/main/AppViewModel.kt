@@ -6,6 +6,7 @@ import com.app.meditation.ui.screen.tuneList.DataTunes
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -45,6 +46,9 @@ class AppViewModel @Inject constructor(var getPlayerUseCase: GetPlayerUseCase) :
     }
     fun getDataTunes(): MutableStateFlow<DataTunes> {
        return getPlayerUseCase.getIsDataTunes()
+    }
+    fun getCurrentProgress(): MutableStateFlow<Float> {
+       return getPlayerUseCase.getCurrentProgress()
     }
 
 

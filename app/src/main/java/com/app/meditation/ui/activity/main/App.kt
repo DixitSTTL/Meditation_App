@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -26,6 +27,7 @@ import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationBar
@@ -63,6 +65,7 @@ import com.app.meditation.ui.screen.AppDrawer
 import com.app.meditation.ui.screen.MainActions
 import com.app.meditation.ui.theme.GreenLight
 import com.app.meditation.ui.theme.MeditationAppTheme
+import com.app.meditation.ui.theme.White30
 import com.app.meditation.ui.theme.White50
 import kotlinx.coroutines.launch
 
@@ -93,6 +96,7 @@ fun App(
         val isPlaying = appViewModel.getIsPlaying().collectAsState().value
         val isPrepared = appViewModel.getIsisPrepared().collectAsState().value
         val dataTunes = appViewModel.getDataTunes().collectAsState().value
+        val currentProgress = appViewModel.getCurrentProgress().collectAsState().value
         val painter = rememberImagePainter(data = dataTunes.image)
 
 
@@ -176,6 +180,7 @@ fun App(
                                     navigationActions.setVisibilityOfPlayer(false)
 
                                 },
+                            shape = RoundedCornerShape(12),
                             colors = CardDefaults.elevatedCardColors(
                                 containerColor = GreenLight
                             )
@@ -183,7 +188,7 @@ fun App(
 
                             Row(
                                 modifier = Modifier
-                                    .padding(8.dp, 6.dp),
+                                    .padding(8.dp, 6.dp,8.dp,4.dp),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Image(
@@ -191,7 +196,7 @@ fun App(
                                     contentDescription = "item.name",
                                     modifier = Modifier
                                         .size(42.dp)
-                                        .clip(shape = RoundedCornerShape(20)),
+                                        .clip(shape = RoundedCornerShape(16)),
                                     contentScale = ContentScale.Crop
                                 )
 
@@ -251,6 +256,17 @@ fun App(
                                     )
                                 }
                             }
+
+                            LinearProgressIndicator(
+                                progress = currentProgress,
+                                color = Color.White,
+                                trackColor = White30,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(2.dp)
+                                    .padding(horizontal =10.dp )
+                                    .clip(shape = RoundedCornerShape(50))
+                            )
                         }
                     }
                 }

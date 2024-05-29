@@ -44,6 +44,10 @@ class GetPlayerUseCase @Inject constructor(val playerRepository: PlayerRepositor
 
         return playerRepository.getIsisPrepared()
     }
+    fun getCurrentProgress(): MutableStateFlow<Float> {
+
+        return playerRepository.getCurrentProgress()
+    }
 
     fun getIsDataTunes(): MutableStateFlow<DataTunes> {
 
@@ -52,5 +56,9 @@ class GetPlayerUseCase @Inject constructor(val playerRepository: PlayerRepositor
 
     suspend fun loadTune(dataTunes: DataTunes) {
         playerRepository.loadTune(dataTunes)
+    }
+
+    fun seekToPosition(float: Float) {
+        playerRepository.seekToPosition(float)
     }
 }

@@ -29,6 +29,10 @@ class PlayerRepository_Impl(var customMediaPlayer: CustomMediaPlayer) : PlayerRe
 
     }
 
+    override fun seekToPosition(float: Float) {
+        customMediaPlayer.seekToPosition(float)
+    }
+
     override suspend fun playPauseAudio() {
         customMediaPlayer.playPauseAudio()
 
@@ -49,6 +53,11 @@ class PlayerRepository_Impl(var customMediaPlayer: CustomMediaPlayer) : PlayerRe
     override fun getIsisPrepared(): MutableStateFlow<Boolean> {
        return customMediaPlayer.isPrepared
     }
+
+    override fun getCurrentProgress(): MutableStateFlow<Float> {
+        return customMediaPlayer.currentProgress
+    }
+
     override fun getDataTunes(): MutableStateFlow<DataTunes> {
        return customMediaPlayer.dataTunes
     }

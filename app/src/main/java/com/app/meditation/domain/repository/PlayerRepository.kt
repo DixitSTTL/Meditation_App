@@ -13,5 +13,7 @@ interface PlayerRepository {
     fun setIsVisible(boolean: Boolean)
     fun getDataTunes():MutableStateFlow<DataTunes>
     fun getIsisPrepared():MutableStateFlow<Boolean>
+    fun getCurrentProgress():MutableStateFlow<Float>
     suspend fun loadTune(dataTunes: DataTunes)
+    fun seekToPosition(float: Float)
 }

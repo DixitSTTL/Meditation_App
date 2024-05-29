@@ -14,7 +14,8 @@ import javax.inject.Inject
 @HiltViewModel
 class PlayerViewModel @Inject constructor(var getPlayerUseCase: GetPlayerUseCase) : ViewModel() {
 
-    fun play_pause_Audio() {
+    var middleSeeker :MutableStateFlow<Float> = getPlayerUseCase.getCurrentProgress()
+    fun playPauseAudio() {
 
         CoroutineScope(Dispatchers.IO).launch {
             getPlayerUseCase.play_pause_Audio()
@@ -33,8 +34,15 @@ class PlayerViewModel @Inject constructor(var getPlayerUseCase: GetPlayerUseCase
     fun getIsisPrepared(): MutableStateFlow<Boolean> {
         return getPlayerUseCase.getIsisPrepared()
     }
+    fun getCurrentProgress(): MutableStateFlow<Float> {
+        return getPlayerUseCase.getCurrentProgress()
+    }
     fun getDataTunes(): MutableStateFlow<DataTunes> {
         return getPlayerUseCase.getIsDataTunes()
+    }
+
+    fun seekToPosition(float: Float) {
+        getPlayerUseCase.seekToPosition(float)
     }
 
 }

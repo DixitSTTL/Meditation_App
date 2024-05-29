@@ -1,6 +1,5 @@
 package com.app.meditation.ui.theme
 
-import android.widget.EditText
 import androidx.compose.ui.graphics.Color
 
 val Purple80 = Color(0xFFD0BCFF)
@@ -18,6 +17,7 @@ val MyWhite = Color(0xFFF7F3F0)
 
 val White90 = Color(0xE6FFFFFF)
 val White50 = Color(0x80FFFFFF)
+val White30 = Color(0x4DFFFFFF)
 
 val EdtColor = Color(0xFFBEC2C2)
 
