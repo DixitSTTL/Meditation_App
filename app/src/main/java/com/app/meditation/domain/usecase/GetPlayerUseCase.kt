@@ -61,4 +61,12 @@ class GetPlayerUseCase @Inject constructor(val playerRepository: PlayerRepositor
     fun seekToPosition(float: Float) {
         playerRepository.seekToPosition(float)
     }
+
+    fun getIsLooping(): MutableStateFlow<Boolean> {
+        return playerRepository.getLooping()
+    }
+
+    fun setLooping(b: Boolean) {
+        playerRepository.setLooping(b)
+    }
 }

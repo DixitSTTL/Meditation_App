@@ -57,6 +57,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import coil.compose.AsyncImage
 import coil.compose.rememberImagePainter
 import com.app.meditation.R
 import com.app.meditation.navigation.NavGraph
@@ -97,7 +98,6 @@ fun App(
         val isPrepared = appViewModel.getIsisPrepared().collectAsState().value
         val dataTunes = appViewModel.getDataTunes().collectAsState().value
         val currentProgress = appViewModel.getCurrentProgress().collectAsState().value
-        val painter = rememberImagePainter(data = dataTunes.image)
 
 
 //    val painter = rememberImagePainter(data = dataTunes.value.image)
@@ -191,8 +191,8 @@ fun App(
                                     .padding(8.dp, 6.dp,8.dp,4.dp),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Image(
-                                    painter = painter,
+                                AsyncImage(
+                                    model = dataTunes.image,
                                     contentDescription = "item.name",
                                     modifier = Modifier
                                         .size(42.dp)
@@ -264,7 +264,7 @@ fun App(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .height(2.dp)
-                                    .padding(horizontal =10.dp )
+                                    .padding(horizontal = 10.dp)
                                     .clip(shape = RoundedCornerShape(50))
                             )
                         }

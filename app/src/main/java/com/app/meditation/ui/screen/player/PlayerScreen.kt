@@ -4,7 +4,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.Image
+import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -13,12 +13,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Slider
-import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -35,6 +37,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -43,24 +46,23 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import coil.compose.rememberImagePainter
+import coil.compose.AsyncImage
 import com.app.meditation.R
 import com.app.meditation.ui.screen.tuneList.DataTunes
+import com.app.meditation.ui.theme.GreenDark
 import com.app.meditation.ui.theme.GreenLight
-import com.app.meditation.ui.theme.White30
 import com.app.meditation.ui.theme.White50
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
 
 @Composable
 fun PlayerScreen(dataTunes: DataTunes, viewmodel: PlayerViewModel = hiltViewModel()) {
 
-    var width by remember { mutableStateOf(0) }
-    var part by remember { mutableStateOf(0) }
     var isLoaded by remember { mutableStateOf(false) }
-    val painter = rememberImagePainter(data = dataTunes.image)
 
     val isPlaying = viewmodel.getIsPlaying().collectAsState().value
     val isPrepared = viewmodel.getIsisPrepared().collectAsState().value
+    val isLooping = viewmodel.isLooping.collectAsState().value
     val currentProgress = viewmodel.getCurrentProgress().collectAsState().value
     val middleSeeker = viewmodel.middleSeeker.collectAsState().value
 
@@ -81,13 +83,14 @@ fun PlayerScreen(dataTunes: DataTunes, viewmodel: PlayerViewModel = hiltViewMode
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .verticalScroll(rememberScrollState())
             .padding(horizontal = 20.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(modifier = Modifier.height(30.dp))
 
-        Image(
-            painter = painter,
+        AsyncImage(
+            model = dataTunes.image,
             contentDescription = "",
             modifier = Modifier
                 .size(200.dp)
@@ -110,37 +113,6 @@ fun PlayerScreen(dataTunes: DataTunes, viewmodel: PlayerViewModel = hiltViewMode
 
         Spacer(modifier = Modifier.height(30.dp))
 
-
-        Slider(
-            value = middleSeeker,
-            onValueChange = {
-                viewmodel.middleSeeker.value = it
-            },
-            colors = SliderDefaults.colors(
-                thumbColor = Color.White,
-                activeTrackColor = Color.White,
-                inactiveTrackColor = White30
-            ),
-            onValueChangeFinished = {
-                viewmodel.seekToPosition(middleSeeker)
-
-            }
-        )
-
-        Spacer(modifier = Modifier.height(30.dp))
-
-        /*     LinearProgressIndicator(
-            progress = currentProgress,
-            color = GreenLight,
-            trackColor = White90,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(4.dp)
-                .clip(shape = RoundedCornerShape(50))
-        )
-
-        Spacer(modifier = Modifier.height(20.dp))*/
-
         DashedProgressBar(
             progress = currentProgress,
             color = Color.Blue,
@@ -148,35 +120,11 @@ fun PlayerScreen(dataTunes: DataTunes, viewmodel: PlayerViewModel = hiltViewMode
             dashWidth = 10f,
             dashGap = 5f,
             strokeWidth = 4f,
-            offsetAnimation
+            offsetAnimation,
+            viewmodel = viewmodel
         )
 
         Spacer(modifier = Modifier.height(20.dp))
-
-        /*        Canvas(
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 8.dp)
-                ) {
-                    width = size.width.toInt()
-                    part = width / 10
-
-                    val pathEffect =
-                        PathEffect.dashPathEffect(floatArrayOf(offsetAnimation, 20f), 10f)
-
-
-                    drawLine(
-                        color = White90,
-                        start = Offset(0f, 0f),
-                        end = Offset(size.width, 0f),
-                        pathEffect = pathEffect,
-                        strokeWidth = 15f,
-                        cap = StrokeCap.Round
-                    )
-
-
-                }
-                Spacer(modifier = Modifier.height(20.dp))*/
 
         Row(verticalAlignment = Alignment.CenterVertically) {
 
@@ -240,12 +188,18 @@ fun PlayerScreen(dataTunes: DataTunes, viewmodel: PlayerViewModel = hiltViewMode
 
             }
 
-            Button(onClick = { /*TODO*/ }) {
+            Button(
+                onClick = {
+                    viewmodel.setLooping(!isLooping)
+                }, shape = RoundedCornerShape(50), colors = ButtonDefaults.buttonColors(
+                    containerColor = if (isLooping) Color.White else Color.Transparent
+                )
+            ) {
 
                 Icon(
                     painter = painterResource(id = R.drawable.ic_repeat),
                     contentDescription = "",
-                    tint = Color.White
+                    tint = if (!isLooping) Color.White else GreenDark
                 )
 
             }
@@ -268,7 +222,8 @@ fun DashedProgressBar(
     dashWidth: Float = 60f,
     dashGap: Float = 30f,
     strokeWidth: Float = 15f,
-    offsetAnimation: Float
+    offsetAnimation: Float,
+    viewmodel: PlayerViewModel
 ) {
     /*
  */
@@ -276,6 +231,31 @@ fun DashedProgressBar(
         modifier = Modifier
             .fillMaxWidth()
             .height(40.dp)
+            .pointerInput("Canvas") {
+                val size = this.size
+                val m = MutableStateFlow(0f)
+                detectDragGestures(
+                    {},
+                    {
+                        viewmodel.seekToPosition(m.value)
+                    },
+                    {},
+                    { t, d ->
+
+                        var X = t.position.x
+                        if (X > size.width) {
+                            X = size.width.toFloat()
+                        } else if (X < 0) {
+                            X = 0f
+                        }
+                        val per = X / size.width
+                        m.value = per
+                        viewmodel.middleSeeker.value = per
+                    }
+
+                )
+
+            }
     ) {
         val totalWidth = size.width
         val halfWidth = size.width / -2

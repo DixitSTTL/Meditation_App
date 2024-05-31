@@ -1,5 +1,6 @@
 package com.app.meditation.ui.screen.player
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.app.meditation.domain.usecase.GetPlayerUseCase
 import com.app.meditation.ui.screen.tuneList.DataTunes
@@ -15,6 +16,8 @@ import javax.inject.Inject
 class PlayerViewModel @Inject constructor(var getPlayerUseCase: GetPlayerUseCase) : ViewModel() {
 
     var middleSeeker :MutableStateFlow<Float> = getPlayerUseCase.getCurrentProgress()
+    var isLooping :MutableStateFlow<Boolean> = getPlayerUseCase.getIsLooping()
+
     fun playPauseAudio() {
 
         CoroutineScope(Dispatchers.IO).launch {
@@ -37,12 +40,21 @@ class PlayerViewModel @Inject constructor(var getPlayerUseCase: GetPlayerUseCase
     fun getCurrentProgress(): MutableStateFlow<Float> {
         return getPlayerUseCase.getCurrentProgress()
     }
+
+    fun getIsLooping(): MutableStateFlow<Boolean> {
+        return getPlayerUseCase.getIsLooping()
+    }
     fun getDataTunes(): MutableStateFlow<DataTunes> {
         return getPlayerUseCase.getIsDataTunes()
     }
 
     fun seekToPosition(float: Float) {
+        Log.d("vvs","$float")
         getPlayerUseCase.seekToPosition(float)
+    }
+
+    fun setLooping(b: Boolean) {
+        getPlayerUseCase.setLooping(b)
     }
 
 }

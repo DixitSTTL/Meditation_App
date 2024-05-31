@@ -17,6 +17,7 @@ class CustomMediaPlayer : Runnable {
     val isPlaying = MutableStateFlow(false)
     val isPrepared = MutableStateFlow(false)
     val isVisible = MutableStateFlow(false)
+    val isLooping = MutableStateFlow(false)
     val currentProgress = MutableStateFlow(0f)
 
     fun loadTune(_dataTunes: DataTunes) {
@@ -99,6 +100,14 @@ class CustomMediaPlayer : Runnable {
         val seek = float*total
         mediaPlayer.seekTo(seek.toInt())
 
+    }
+    fun setLooping(boolean: Boolean) {
+        mediaPlayer.isLooping = boolean
+        isLooping.value = mediaPlayer.isLooping
+    }
+
+    fun getLooping(): MutableStateFlow<Boolean> {
+        return isLooping
     }
 
 

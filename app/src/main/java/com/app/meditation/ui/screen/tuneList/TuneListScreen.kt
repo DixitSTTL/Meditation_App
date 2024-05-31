@@ -38,7 +38,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import coil.compose.rememberImagePainter
+import coil.compose.AsyncImage
 import com.app.meditation.R
 import com.app.meditation.ui.theme.White90
 
@@ -171,7 +171,6 @@ fun TuneListScreen(dataTunes: (DataTunes) -> Unit, viewmodel: TuneViewModel = hi
 
 @Composable
 fun TuneItem(item: DataTunes, dataTunes: (DataTunes) -> Unit) {
-    val painter = rememberImagePainter(data = item.image)
 
     Row(verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
@@ -179,8 +178,8 @@ fun TuneItem(item: DataTunes, dataTunes: (DataTunes) -> Unit) {
             .clickable {
                 dataTunes(item)
             }) {
-        Image(
-            painter = painter,
+        AsyncImage(
+            model = item.image,
             contentDescription = item.name,
             modifier = Modifier
                 .size(80.dp)

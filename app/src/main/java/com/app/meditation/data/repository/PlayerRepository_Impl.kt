@@ -33,6 +33,14 @@ class PlayerRepository_Impl(var customMediaPlayer: CustomMediaPlayer) : PlayerRe
         customMediaPlayer.seekToPosition(float)
     }
 
+    override fun setLooping(boolean: Boolean) {
+        customMediaPlayer.setLooping(boolean)
+    }
+
+    override fun getLooping(): MutableStateFlow<Boolean> {
+        return customMediaPlayer.getLooping()
+    }
+
     override suspend fun playPauseAudio() {
         customMediaPlayer.playPauseAudio()
 

@@ -16,4 +16,6 @@ interface PlayerRepository {
     fun getCurrentProgress():MutableStateFlow<Float>
     suspend fun loadTune(dataTunes: DataTunes)
     fun seekToPosition(float: Float)
+    fun setLooping(boolean: Boolean)
+    fun getLooping():MutableStateFlow<Boolean>
 }
