@@ -4,5 +4,6 @@ data class DataTools(
     var name: String,
     var icon: Int,
     var cloudColor: Int,
-    var bgColor: Int
+    var bgColor: Int,
+    var navigation: String
 )

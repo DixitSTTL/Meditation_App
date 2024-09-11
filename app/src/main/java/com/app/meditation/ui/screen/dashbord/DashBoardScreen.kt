@@ -172,7 +172,7 @@ fun DashBoardScreen(
                 ) {
                     Image(
                         modifier = Modifier.size(40.dp),
-                        painter = painterResource(id = R.drawable.ic_calm),
+                        painter = painterResource(id = R.drawable.ic_anxious),
                         contentDescription = ""
                     )
                 }

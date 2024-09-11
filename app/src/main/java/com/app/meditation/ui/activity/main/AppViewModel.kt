@@ -6,8 +6,8 @@ import com.app.meditation.ui.screen.tuneList.DataTunes
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -26,30 +26,22 @@ class AppViewModel @Inject constructor(var getPlayerUseCase: GetPlayerUseCase) :
     fun playPauseAudio() {
 
         CoroutineScope(Dispatchers.IO).launch {
-            getPlayerUseCase.play_pause_Audio()
+            getPlayerUseCase.playPauseAudio()
 
         }
 
         // below line is use to display a toast message.
     }
-    fun getIsPlaying(): MutableStateFlow<Boolean> {
-       return getPlayerUseCase.getIsPlaying()
-    }
-    fun getIsVisible(): MutableStateFlow<Boolean> {
-       return getPlayerUseCase.getIsVisible()
-    }
+
+
     fun setIsVisible(boolean: Boolean) {
        return getPlayerUseCase.setIsVisible(boolean)
     }
-    fun getIsisPrepared(): MutableStateFlow<Boolean> {
-       return getPlayerUseCase.getIsisPrepared()
+
+    fun getState(): StateFlow<MainState> {
+       return getPlayerUseCase.getState()
     }
-    fun getDataTunes(): MutableStateFlow<DataTunes> {
-       return getPlayerUseCase.getIsDataTunes()
-    }
-    fun getCurrentProgress(): MutableStateFlow<Float> {
-       return getPlayerUseCase.getCurrentProgress()
-    }
+
 
 
 }

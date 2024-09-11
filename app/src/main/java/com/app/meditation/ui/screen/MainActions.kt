@@ -13,6 +13,11 @@ class MainActions(
     applicationContext: Context,
     appViewModel: AppViewModel
 ) {
+    val navigateToTool={it:String->
+        navController.navigate(it)
+
+    }
+
     val showToast = { it: String ->
         Toast.makeText(applicationContext, it, Toast.LENGTH_SHORT).show()
 
@@ -71,6 +76,7 @@ object MainDestinations {
     const val TOOLS_ROUTE = "toolsRoute"
     const val MEDITATION_ROUTE = "meditationRoute"
     const val SLEEP_ROUTE = "sleepRoute"
+    const val MOOD_JOURNAL = "journalRoute"
 
 
     const val DATA_TUNE_KEY = "data_tune_key"

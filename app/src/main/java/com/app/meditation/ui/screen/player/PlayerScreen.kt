@@ -1,7 +1,9 @@
 package com.app.meditation.ui.screen.player
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectDragGestures
@@ -48,6 +50,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.app.meditation.R
+import com.app.meditation.ui.activity.main.MainState
 import com.app.meditation.ui.screen.tuneList.DataTunes
 import com.app.meditation.ui.theme.GreenDark
 import com.app.meditation.ui.theme.GreenLight
@@ -58,28 +61,16 @@ import kotlinx.coroutines.flow.MutableStateFlow
 @Composable
 fun PlayerScreen(dataTunes: DataTunes, viewmodel: PlayerViewModel = hiltViewModel()) {
 
-    var isLoaded by remember { mutableStateOf(false) }
-
-    val isPlaying = viewmodel.getIsPlaying().collectAsState().value
-    val isPrepared = viewmodel.getIsisPrepared().collectAsState().value
-    val isLooping = viewmodel.isLooping.collectAsState().value
-    val currentProgress = viewmodel.getCurrentProgress().collectAsState().value
-    val middleSeeker = viewmodel.middleSeeker.collectAsState().value
+    val state = viewmodel.getState().collectAsState().value
 
     val offsetAnimation: Float by animateFloatAsState(
 
-        if (isLoaded) 100f else 30f,
-        animationSpec = tween(
-            delayMillis = 1000,
-            durationMillis = 1500
+        if (state.isPrepared) 100f else 30f,
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioMediumBouncy,
+            stiffness = Spring.StiffnessVeryLow
         )
     )
-    LaunchedEffect(dataTunes) {
-        isLoaded = false
-        delay(1000)
-        isLoaded = true
-
-    }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -114,14 +105,14 @@ fun PlayerScreen(dataTunes: DataTunes, viewmodel: PlayerViewModel = hiltViewMode
         Spacer(modifier = Modifier.height(30.dp))
 
         DashedProgressBar(
-            progress = currentProgress,
+            progress = state.currentProgress,
             color = Color.Blue,
             backgroundColor = Color.LightGray,
             dashWidth = 10f,
             dashGap = 5f,
             strokeWidth = 4f,
             offsetAnimation,
-            viewmodel = viewmodel
+            viewmodel = viewmodel,
         )
 
         Spacer(modifier = Modifier.height(20.dp))
@@ -147,7 +138,7 @@ fun PlayerScreen(dataTunes: DataTunes, viewmodel: PlayerViewModel = hiltViewMode
 
             }
 
-            AnimatedVisibility(visible = isPrepared) {
+            AnimatedVisibility(visible = state.isPrepared) {
                 Button(onClick = {
 
                     viewmodel.playPauseAudio()
@@ -155,7 +146,7 @@ fun PlayerScreen(dataTunes: DataTunes, viewmodel: PlayerViewModel = hiltViewMode
 
                     Icon(
                         painter = painterResource(
-                            id = if (isPlaying) {
+                            id = if (state.isPlaying) {
                                 R.drawable.ic_pause
                             } else {
                                 R.drawable.ic_play
@@ -169,7 +160,7 @@ fun PlayerScreen(dataTunes: DataTunes, viewmodel: PlayerViewModel = hiltViewMode
                 }
             }
 
-            AnimatedVisibility(visible = !isPrepared) {
+            AnimatedVisibility(visible = !state.isPrepared) {
                 CircularProgressIndicator(
                     modifier = Modifier,
                     color = Color.White,
@@ -190,16 +181,16 @@ fun PlayerScreen(dataTunes: DataTunes, viewmodel: PlayerViewModel = hiltViewMode
 
             Button(
                 onClick = {
-                    viewmodel.setLooping(!isLooping)
+                    viewmodel.setLooping(!state.isLooping)
                 }, shape = RoundedCornerShape(50), colors = ButtonDefaults.buttonColors(
-                    containerColor = if (isLooping) Color.White else Color.Transparent
+                    containerColor = if (state.isLooping) Color.White else Color.Transparent
                 )
             ) {
 
                 Icon(
                     painter = painterResource(id = R.drawable.ic_repeat),
                     contentDescription = "",
-                    tint = if (!isLooping) Color.White else GreenDark
+                    tint = if (!state.isLooping) Color.White else GreenDark
                 )
 
             }
@@ -223,7 +214,7 @@ fun DashedProgressBar(
     dashGap: Float = 30f,
     strokeWidth: Float = 15f,
     offsetAnimation: Float,
-    viewmodel: PlayerViewModel
+    viewmodel: PlayerViewModel,
 ) {
     /*
  */
@@ -250,7 +241,7 @@ fun DashedProgressBar(
                         }
                         val per = X / size.width
                         m.value = per
-                        viewmodel.middleSeeker.value = per
+                        viewmodel.updateProgress(per)
                     }
 
                 )

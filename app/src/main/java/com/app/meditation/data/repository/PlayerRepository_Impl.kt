@@ -2,29 +2,16 @@ package com.app.meditation.data.repository
 
 import com.app.meditation.common.util.CustomMediaPlayer
 import com.app.meditation.domain.repository.PlayerRepository
+import com.app.meditation.ui.activity.main.MainState
 import com.app.meditation.ui.screen.tuneList.DataTunes
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
 class PlayerRepository_Impl(var customMediaPlayer: CustomMediaPlayer) : PlayerRepository {
 
-    override suspend fun startTune() {
 
-        customMediaPlayer.mediaPlayer.prepare()
-        customMediaPlayer.mediaPlayer.start()
-    }
-
-    override suspend fun playTune() {
-        customMediaPlayer.mediaPlayer.start()
-
-    }
-
-    override suspend fun pauseTune() {
-        customMediaPlayer.mediaPlayer.pause()
-
-    }
 
     override suspend fun loadTune(dataTunes: DataTunes) {
-
         customMediaPlayer.loadTune(dataTunes)
 
     }
@@ -37,36 +24,23 @@ class PlayerRepository_Impl(var customMediaPlayer: CustomMediaPlayer) : PlayerRe
         customMediaPlayer.setLooping(boolean)
     }
 
-    override fun getLooping(): MutableStateFlow<Boolean> {
-        return customMediaPlayer.getLooping()
+    override fun updateProgress(float: Float) {
+        customMediaPlayer.updateProgress(float)
     }
+
 
     override suspend fun playPauseAudio() {
         customMediaPlayer.playPauseAudio()
 
     }
 
-    override fun getIsVisible(): MutableStateFlow<Boolean> {
-        return customMediaPlayer.isVisible
+    override fun getState(): StateFlow<MainState> {
+        return customMediaPlayer.state
     }
 
     override fun setIsVisible(boolean: Boolean) {
-        customMediaPlayer.isVisible.value = boolean
+        customMediaPlayer.setIsVisible(boolean)
     }
 
 
-    override fun getIsPlaying(): MutableStateFlow<Boolean> {
-       return customMediaPlayer.isPlaying
-    }
-    override fun getIsisPrepared(): MutableStateFlow<Boolean> {
-       return customMediaPlayer.isPrepared
-    }
-
-    override fun getCurrentProgress(): MutableStateFlow<Float> {
-        return customMediaPlayer.currentProgress
-    }
-
-    override fun getDataTunes(): MutableStateFlow<DataTunes> {
-       return customMediaPlayer.dataTunes
-    }
 }

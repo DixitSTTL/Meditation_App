@@ -90,14 +90,13 @@ fun App(
         }
 
         val isExpandedScreen = widthSizeClass == WindowWidthSizeClass.Expanded
+        val canNavigateBack = navController.previousBackStackEntry != null
+
 
         val sizeAwareDrawerState = rememberSizeAwareDrawerState(isExpandedScreen)
 
-        val isVisible = appViewModel.getIsVisible().collectAsState().value
-        val isPlaying = appViewModel.getIsPlaying().collectAsState().value
-        val isPrepared = appViewModel.getIsisPrepared().collectAsState().value
-        val dataTunes = appViewModel.getDataTunes().collectAsState().value
-        val currentProgress = appViewModel.getCurrentProgress().collectAsState().value
+
+        val state = appViewModel.getState().collectAsState().value
 
 
 //    val painter = rememberImagePainter(data = dataTunes.value.image)
@@ -130,7 +129,7 @@ fun App(
                         },
                         navigationIcon = {
                             Icon(
-                                painter = painterResource(id = if (currentRoute == AppTabs.HOME.route) R.drawable.ic_drawer else R.drawable.ic_back),
+                                painter = painterResource(id = if (canNavigateBack) R.drawable.ic_back else  R.drawable.ic_drawer),
                                 contentDescription = "",
                                 modifier = Modifier
                                     .size(35.dp)
@@ -169,14 +168,14 @@ fun App(
                         appViewModel = appViewModel
                     )
 
-                    if (isVisible) {
+                    if (state.isVisible) {
                         Card(
                             modifier = Modifier
                                 .padding(12.dp, 4.dp)
                                 .fillMaxWidth()
                                 .align(Alignment.BottomCenter)
                                 .clickable {
-                                    navigationActions.navigatePlayer(dataTunes)
+                                    navigationActions.navigatePlayer(state.dataTune)
                                     navigationActions.setVisibilityOfPlayer(false)
 
                                 },
@@ -192,7 +191,7 @@ fun App(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 AsyncImage(
-                                    model = dataTunes.image,
+                                    model = state.dataTune.image,
                                     contentDescription = "item.name",
                                     modifier = Modifier
                                         .size(42.dp)
@@ -208,7 +207,7 @@ fun App(
                                         .align(Alignment.Top)
                                 ) {
                                     Text(
-                                        text = dataTunes.name.toString(),
+                                        text = state.dataTune.name.toString(),
                                         style = TextStyle(
                                             fontFamily = FontFamily(Font(R.font.alegreya_semi_bold)),
                                             fontSize = 16.sp,
@@ -216,7 +215,7 @@ fun App(
                                         )
                                     )
                                     Text(
-                                        text = "${dataTunes.listener} Monthly listeners",
+                                        text = "${state.dataTune.listener} Monthly listeners",
                                         style = TextStyle(
                                             fontFamily = FontFamily(Font(R.font.alegreya_regular)),
                                             fontSize = 12.sp,
@@ -229,10 +228,10 @@ fun App(
 
                                 Spacer(modifier = Modifier.width(16.dp))
 
-                                AnimatedVisibility(visible = isPrepared) {
+                                AnimatedVisibility(visible = state.isPrepared) {
                                     Icon(
                                         painter = painterResource(
-                                            id = if (isPlaying) {
+                                            id = if (state.isPlaying) {
                                                 R.drawable.ic_pause
                                             } else {
                                                 R.drawable.ic_play
@@ -248,7 +247,7 @@ fun App(
                                     )
                                 }
 
-                                AnimatedVisibility(visible = !isPrepared) {
+                                AnimatedVisibility(visible = !state.isPrepared) {
                                     CircularProgressIndicator(
                                         modifier = Modifier,
                                         color = Color.White,
@@ -258,7 +257,7 @@ fun App(
                             }
 
                             LinearProgressIndicator(
-                                progress = currentProgress,
+                                progress = state.currentProgress,
                                 color = Color.White,
                                 trackColor = White30,
                                 modifier = Modifier

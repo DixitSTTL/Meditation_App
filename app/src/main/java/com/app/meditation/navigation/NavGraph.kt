@@ -38,6 +38,7 @@ import com.app.meditation.ui.screen.MainActions
 import com.app.meditation.ui.screen.MainDestinations
 import com.app.meditation.ui.screen.dashbord.DashBoardScreen
 import com.app.meditation.ui.screen.meditation.MeditationScreen
+import com.app.meditation.ui.screen.moodJournal.MoodJournalScreen
 import com.app.meditation.ui.screen.player.PlayerScreen
 import com.app.meditation.ui.screen.profile.ProfileScreen
 import com.app.meditation.ui.screen.sleep.SleepScreen
@@ -63,7 +64,7 @@ fun NavGraph(
     }
 
     val actions =
-        remember(navController) { MainActions(navController, applicationContext,appViewModel) }
+        remember(navController) { MainActions(navController, applicationContext, appViewModel) }
 
 
     Box(modifier = Modifier) {
@@ -128,9 +129,10 @@ fun NavGraph(
                     actions.navigateBack()
                 }
 
-                ToolsScreen() {
-                    actions.showToast(it.name)
-                }
+                ToolsScreen(onClick = {dataTool->
+
+                    actions.navigateToTool(dataTool.navigation)
+                })
 
 
             }
@@ -165,6 +167,10 @@ fun NavGraph(
                     actions.setVisibilityOfPlayer(true)
 
                 }
+
+            }
+            composable(route = MainDestinations.MOOD_JOURNAL) { backStackEntry: NavBackStackEntry ->
+                MoodJournalScreen()
 
             }
 
