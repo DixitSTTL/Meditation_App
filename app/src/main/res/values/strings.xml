@@ -3,6 +3,7 @@
     <string name="home_tab">home</string>
     <string name="tune_tab">tune</string>
     <string name="meditation">Meditation</string>
+    <string name="logout">Logout</string>
     <string name="tools">Tools</string>
     <string name="sleep">Sleep Time</string>
 </resources>

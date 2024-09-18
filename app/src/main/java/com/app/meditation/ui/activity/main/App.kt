@@ -37,6 +37,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDrawerState
+import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -58,7 +59,6 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
-import coil.compose.rememberImagePainter
 import com.app.meditation.R
 import com.app.meditation.navigation.NavGraph
 import com.app.meditation.navigation.TabDestinations
@@ -76,7 +76,7 @@ fun App(
     applicationContext: Context,
     widthSizeClass: WindowWidthSizeClass,
     finishActivity: () -> Unit,
-    appViewModel: AppViewModel
+    appViewModel: AppViewModel,
 ) {
 
     MeditationAppTheme {
@@ -98,6 +98,7 @@ fun App(
 
         val state = appViewModel.getState().collectAsState().value
 
+        val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
 
 //    val painter = rememberImagePainter(data = dataTunes.value.image)
 

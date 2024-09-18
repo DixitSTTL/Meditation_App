@@ -1,7 +1,5 @@
 package com.app.meditation.ui.screen.dashbord
 
-import android.content.Context
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -22,6 +20,8 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -32,6 +32,7 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.app.meditation.R
 import com.app.meditation.ui.theme.GreenDark
 import com.app.meditation.ui.theme.MyWhite
@@ -41,8 +42,12 @@ import com.app.meditation.ui.theme.White90
 @Composable
 fun DashBoardScreen(
     cardioClick: () -> Unit,
-    meditationClick: () -> Unit
+    meditationClick: () -> Unit,
+    viewModel: DashBoardViewModel = hiltViewModel(),
 ) {
+
+    val state by viewModel.state.collectAsState()
+
     Column(
         modifier = Modifier
             .verticalScroll(rememberScrollState())
@@ -51,7 +56,7 @@ fun DashBoardScreen(
     ) {
 
         Text(
-            text = "Welcome back, Afreen!",
+            text = "Welcome back, ${state.userName}",
             style = TextStyle(
                 fontFamily = FontFamily(Font(R.font.alegreya_semi_bold)),
                 fontSize = 22.sp,

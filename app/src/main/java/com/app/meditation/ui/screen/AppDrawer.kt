@@ -16,7 +16,10 @@
 
 package com.app.meditation.ui.screen
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -33,46 +36,86 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import com.app.meditation.R
+import com.app.meditation.ui.theme.GreenDark
 
 @Composable
 fun AppDrawer(
-    currentRoute: String,
+    currentRoute: String?,
     navigateToMeditation: () -> Unit,
     navigateToTools: () -> Unit,
     navigateToSleep: () -> Unit,
     closeDrawer: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    ModalDrawerSheet(modifier) {
-        Spacer(modifier = Modifier.height(20.dp))
+    ModalDrawerSheet(modifier, drawerContainerColor = GreenDark) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            Column {
 
-        NavigationDrawerItem(
-            label = { Text(stringResource(id = R.string.meditation), fontFamily = FontFamily(Font(R.font.alegreya_semi_bold))) },
-            icon = { Icon(painterResource(id = R.drawable.ic_focus), null,Modifier.size(26.dp)) },
-            selected = currentRoute == JetnewsDestinations.HOME_ROUTE,
-            onClick = { navigateToMeditation(); closeDrawer() },
-            modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
-        )
+                Spacer(modifier = Modifier.height(20.dp))
 
-        Spacer(modifier = Modifier.height(6.dp))
+                NavigationDrawerItem(
+                    label = {
+                        Text(
+                            stringResource(id = R.string.meditation),
+                            fontFamily = FontFamily(Font(R.font.alegreya_semi_bold))
+                        )
+                    },
+                    icon = {
+                        Icon(
+                            painterResource(id = R.drawable.ic_focus),
+                            null,
+                            Modifier.size(26.dp)
+                        )
+                    },
+                    selected = currentRoute == JetnewsDestinations.HOME_ROUTE,
+                    onClick = { navigateToMeditation(); closeDrawer() },
+                    modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
+                )
 
-        NavigationDrawerItem(
-            label = { Text(stringResource(id = R.string.tools), fontFamily = FontFamily(Font(R.font.alegreya_semi_bold))) },
-            icon = { Icon(painterResource(id = R.drawable.ic_journal), null,Modifier.size(26.dp)) },
-            selected = currentRoute == JetnewsDestinations.INTERESTS_ROUTE,
-            onClick = { navigateToTools(); closeDrawer() },
-            modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
-        )
+                Spacer(modifier = Modifier.height(6.dp))
 
-        Spacer(modifier = Modifier.height(6.dp))
+                NavigationDrawerItem(
+                    label = {
+                        Text(
+                            stringResource(id = R.string.tools),
+                            fontFamily = FontFamily(Font(R.font.alegreya_semi_bold))
+                        )
+                    },
+                    icon = {
+                        Icon(
+                            painterResource(id = R.drawable.ic_journal),
+                            null,
+                            Modifier.size(26.dp)
+                        )
+                    },
+                    selected = currentRoute == JetnewsDestinations.INTERESTS_ROUTE,
+                    onClick = { navigateToTools(); closeDrawer() },
+                    modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
+                )
 
-        NavigationDrawerItem(
-            label = { Text(stringResource(id = R.string.sleep), fontFamily = FontFamily(Font(R.font.alegreya_semi_bold))) },
-            icon = { Icon(painterResource(id = R.drawable.ic_sleep), null,Modifier.size(26.dp)) },
-            selected = currentRoute == JetnewsDestinations.INTERESTS_ROUTE,
-            onClick = { navigateToSleep(); closeDrawer() },
-            modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
-        )
+                Spacer(modifier = Modifier.height(6.dp))
+
+                NavigationDrawerItem(
+                    label = {
+                        Text(
+                            stringResource(id = R.string.sleep),
+                            fontFamily = FontFamily(Font(R.font.alegreya_semi_bold))
+                        )
+                    },
+                    icon = {
+                        Icon(
+                            painterResource(id = R.drawable.ic_sleep),
+                            null,
+                            Modifier.size(26.dp)
+                        )
+                    },
+                    selected = currentRoute == JetnewsDestinations.INTERESTS_ROUTE,
+                    onClick = { navigateToSleep(); closeDrawer() },
+                    modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
+                )
+            }
+
+        }
 
 
     }

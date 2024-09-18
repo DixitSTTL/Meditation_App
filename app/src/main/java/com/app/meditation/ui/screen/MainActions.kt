@@ -77,6 +77,8 @@ object MainDestinations {
     const val MEDITATION_ROUTE = "meditationRoute"
     const val SLEEP_ROUTE = "sleepRoute"
     const val MOOD_JOURNAL = "journalRoute"
+    const val MOOD_BOOSTER = "boosterRoute"
+    const val POSITIVE_NOTES = "notesRoute"
 
 
     const val DATA_TUNE_KEY = "data_tune_key"

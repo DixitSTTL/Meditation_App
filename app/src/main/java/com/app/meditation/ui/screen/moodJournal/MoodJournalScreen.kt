@@ -1,9 +1,9 @@
 package com.app.meditation.ui.screen.moodJournal
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -52,24 +52,32 @@ fun MoodItem(item: MoodJournal) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(20.dp, 10.dp)
-            .shadow( elevation = 10.dp, spotColor = Color.White, shape = RoundedCornerShape(20.dp)),
+            .shadow(elevation = 10.dp, spotColor = Color.White, shape = RoundedCornerShape(20.dp)),
 
         colors = CardDefaults.elevatedCardColors(
             containerColor = GreenLight,
-        )) {
+        )
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(12.dp)
         ) {
-            Image(painter = painterResource(item.icon), "",Modifier.size(50.dp))
-            Text(
-                text = item.title, style = TextStyle(
-                    fontFamily = FontFamily(Font(R.font.alegreya_semi_bold)),
-                    fontSize = 20.sp,
-                    color = Color.White
-                ), modifier = Modifier.padding(0.dp, 4.dp)
-            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) {
+                Text(
+                    text = item.title, style = TextStyle(
+                        fontFamily = FontFamily(Font(R.font.alegreya_semi_bold)),
+                        fontSize = 20.sp,
+                        color = Color.White
+                    ), modifier = Modifier.weight(1f).padding(0.dp, 4.dp)
+                )
+                Image(painter = painterResource(item.icon), "", Modifier.size(50.dp))
+
+            }
+
             Text(
                 text = item.description, style = TextStyle(
                     fontFamily = FontFamily(Font(R.font.alegreya_talic)),

@@ -38,8 +38,10 @@ import com.app.meditation.ui.screen.MainActions
 import com.app.meditation.ui.screen.MainDestinations
 import com.app.meditation.ui.screen.dashbord.DashBoardScreen
 import com.app.meditation.ui.screen.meditation.MeditationScreen
+import com.app.meditation.ui.screen.moodBooster.MoodBoosterScreen
 import com.app.meditation.ui.screen.moodJournal.MoodJournalScreen
 import com.app.meditation.ui.screen.player.PlayerScreen
+import com.app.meditation.ui.screen.positiveNotes.PositiveNotesScreen
 import com.app.meditation.ui.screen.profile.ProfileScreen
 import com.app.meditation.ui.screen.sleep.SleepScreen
 import com.app.meditation.ui.screen.tools.ToolsScreen
@@ -129,7 +131,7 @@ fun NavGraph(
                     actions.navigateBack()
                 }
 
-                ToolsScreen(onClick = {dataTool->
+                ToolsScreen(onClick = { dataTool ->
 
                     actions.navigateToTool(dataTool.navigation)
                 })
@@ -174,10 +176,17 @@ fun NavGraph(
 
             }
 
+            composable(route = MainDestinations.MOOD_BOOSTER) { backStackEntry: NavBackStackEntry ->
+                MoodBoosterScreen()
+            }
+
+            composable(route = MainDestinations.POSITIVE_NOTES) { backStackEntry: NavBackStackEntry ->
+                PositiveNotesScreen()
+            }
+
         }
 
     }
-
 
 }
 

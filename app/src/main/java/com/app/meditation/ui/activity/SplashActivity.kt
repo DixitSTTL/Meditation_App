@@ -38,7 +38,7 @@ import javax.inject.Inject
 class SplashActivity : ComponentActivity() {
 
     @Inject
-    lateinit var  shared: UtilsSharedPreferences
+    lateinit var shared: UtilsSharedPreferences
     override fun onCreate(savedInstanceState: Bundle?) {
 
         enableEdgeToEdge()
