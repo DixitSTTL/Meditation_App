@@ -27,7 +27,7 @@ class DashBoardViewModel @Inject constructor(
     private fun getUserData() {
 
         viewModelScope.launch(Dispatchers.IO) {
-            _state.update {data->
+            _state.update { data ->
                 data.copy(userName = getUseDataUseCase.getUserName())
             }
         }

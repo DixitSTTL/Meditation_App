@@ -6,7 +6,6 @@ import com.app.meditation.ui.screen.tuneList.DataTunes
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -35,13 +34,12 @@ class AppViewModel @Inject constructor(var getPlayerUseCase: GetPlayerUseCase) :
 
 
     fun setIsVisible(boolean: Boolean) {
-       return getPlayerUseCase.setIsVisible(boolean)
+        return getPlayerUseCase.setIsVisible(boolean)
     }
 
     fun getState(): StateFlow<MainState> {
-       return getPlayerUseCase.getState()
+        return getPlayerUseCase.getState()
     }
-
 
 
 }

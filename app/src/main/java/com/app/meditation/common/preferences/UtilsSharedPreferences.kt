@@ -11,7 +11,7 @@ class UtilsSharedPreferences {
 
     constructor(context: Context) {
         mContext = context
-            mPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+        mPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
     }
 
     constructor(preferenceName: String?, context: Context) {

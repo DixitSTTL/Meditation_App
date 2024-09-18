@@ -24,9 +24,6 @@ class NoteViewModel @Inject constructor(
         getNoteList()
     }
 
-
-
-
     private fun getNoteList() {
 
         CoroutineScope(Dispatchers.IO).launch {

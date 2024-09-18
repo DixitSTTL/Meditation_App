@@ -2,11 +2,13 @@ package com.app.meditation.di
 
 import com.app.MyApp
 import com.app.meditation.common.util.CustomMediaPlayer
+import com.app.meditation.data.repository.AuthRepository_Impl
 import com.app.meditation.data.repository.NoteRepository_Impl
 import com.app.meditation.data.repository.PlayerRepository_Impl
 import com.app.meditation.data.repository.TuneRepository_Impl
 import com.app.meditation.data.repository.UserRepository_Impl
 import com.app.meditation.database.DatabaseHelper
+import com.app.meditation.domain.repository.AuthRepository
 import com.app.meditation.domain.repository.NoteRepository
 import com.app.meditation.domain.repository.PlayerRepository
 import com.app.meditation.domain.repository.TuneRepository
@@ -37,8 +39,12 @@ class RepositoryModule {
 
 
     @Provides
-    fun getUserRepository(databaseHelper: UtilsSharedPreferences,myApp: MyApp): UserRepository =
-        UserRepository_Impl(databaseHelper,myApp)
+    fun getUserRepository(databaseHelper: UtilsSharedPreferences, myApp: MyApp): UserRepository =
+        UserRepository_Impl(databaseHelper, myApp)
+
+    @Provides
+    fun getAuthRepository(databaseHelper: UtilsSharedPreferences, myApp: MyApp): AuthRepository =
+        AuthRepository_Impl(databaseHelper, myApp)
 
 
 }

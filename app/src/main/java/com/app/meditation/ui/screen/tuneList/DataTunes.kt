@@ -4,14 +4,13 @@ import android.net.Uri
 import android.os.Parcel
 import android.os.Parcelable
 import com.google.gson.Gson
-import java.io.Serializable
 
 data class DataTunes(
-    var name: String?="",
-    var listener: Int=0,
-    var image: String?="",
-    var duration: Int=0,
-    var link: String?=""
+    var name: String? = "",
+    var listener: Int = 0,
+    var image: String? = "",
+    var duration: Int = 0,
+    var link: String? = ""
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readString(),

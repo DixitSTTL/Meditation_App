@@ -7,6 +7,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
+import com.app.meditation.ui.screen.MainDestinations
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -18,11 +19,12 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
 
+        val initialScreen = intent.getStringExtra("initialScreen") ?: MainDestinations.WELCOME_ROUTE
         setContent {
             val widthSizeClass = calculateWindowSizeClass(this).widthSizeClass
-            App(applicationContext,widthSizeClass,{
+            App(applicationContext, widthSizeClass, {
                 finish()
-            },libraryViewModel)
+            }, libraryViewModel, initialScreen)
         }
     }
 }

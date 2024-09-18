@@ -1,4 +1,4 @@
-package com.app.meditation.ui.screen.login
+package com.app.meditation.ui.screen.auth.login
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -49,7 +49,6 @@ import com.app.meditation.ui.theme.White90
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(
-    navigateBack: () -> Unit,
     navigateSignUp: () -> Unit,
     navigateMainActivity: () -> Unit,
     showToast: (String) -> Unit,
@@ -57,10 +56,7 @@ fun LoginScreen(
 ) {
 
 
-    val mEmailText by viewModel.mEmailText.collectAsState()
-
-    val mPassText by viewModel.mPassText.collectAsState()
-
+    val state by viewModel.state.collectAsState()
 
     Box(
         modifier = Modifier
@@ -117,8 +113,8 @@ fun LoginScreen(
                     color = EdtColor,
                     fontFamily = FontFamily(Font(R.font.alegreya_regular))
                 ),
-                value = mEmailText, onValueChange = {
-                    viewModel.mEmailText.value = it
+                value = state.email, onValueChange = { it ->
+                    viewModel.updateEmail(it)
                 },
                 label = {
                     Text(
@@ -151,9 +147,9 @@ fun LoginScreen(
                     color = EdtColor,
                     fontFamily = FontFamily(Font(R.font.alegreya_regular))
                 ),
-                value = mPassText,
-                onValueChange = {
-                    viewModel.mPassText.value = it
+                value = state.password,
+                onValueChange = { it ->
+                    viewModel.updatePassword(it)
                 },
                 label = {
                     Text(
@@ -169,12 +165,8 @@ fun LoginScreen(
                     imeAction = ImeAction.Done, keyboardType = KeyboardType.Password
                 ),
                 keyboardActions = KeyboardActions(onDone = {
-
-                    if (viewModel.validation(showToast)) {
-                        if (viewModel.loginToApp()){
-                            navigateMainActivity()
-                        }
-
+                    viewModel.loginToApp() {
+                        navigateMainActivity()
                     }
                 }),
                 colors = TextFieldDefaults.textFieldColors(
@@ -193,12 +185,11 @@ fun LoginScreen(
 
             Button(
                 onClick = {
-                    if (viewModel.validation(showToast)) {
-                        if (viewModel.loginToApp()){
-                            navigateMainActivity()
-                        }
-
+                    viewModel.loginToApp() {
+                        navigateMainActivity()
                     }
+
+
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -260,10 +251,4 @@ fun LoginScreen(
     }
 
 
-}
-
-@Composable
-fun PreView() {
-
-    LoginScreen({}, {}, {}, {})
 }

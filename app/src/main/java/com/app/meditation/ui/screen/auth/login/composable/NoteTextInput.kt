@@ -1,4 +1,4 @@
-package com.app.meditation.ui.screen.login.composable
+package com.app.meditation.ui.screen.auth.login.composable
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -10,12 +10,17 @@ import androidx.compose.ui.unit.dp
 
 
 @Composable
-fun NoteTextInput(value: String,placeholder: String,minLines:Int, onValueChange: (String) -> Unit) {
+fun NoteTextInput(
+    value: String,
+    placeholder: String,
+    minLines: Int,
+    onValueChange: (String) -> Unit
+) {
 
     OutlinedTextField(
         value = value,
         onValueChange = onValueChange,
-        singleLine =minLines<=1 ,
+        singleLine = minLines <= 1,
         placeholder = { Text(placeholder) },
         modifier = Modifier
             .fillMaxWidth()

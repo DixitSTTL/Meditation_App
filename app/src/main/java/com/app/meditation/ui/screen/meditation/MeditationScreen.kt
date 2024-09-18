@@ -20,7 +20,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.app.meditation.R
@@ -51,7 +50,7 @@ fun MeditationScreen() {
             text = "Guided by a short introductory course,\n" +
                     "start trying meditation.", color = White50, style = TextStyle(
                 fontFamily = FontFamily(Font(R.font.alegreya_regular)), fontSize = 16.sp,
-                        textAlign = TextAlign.Center
+                textAlign = TextAlign.Center
             )
         )
 

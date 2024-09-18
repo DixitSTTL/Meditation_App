@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.lifecycleScope
 import com.app.meditation.R
 import com.app.meditation.ui.activity.main.MainActivity
-import com.app.meditation.ui.activity.welcome.WelcomeLSActivity
+import com.app.meditation.ui.screen.MainDestinations
 import com.ctuil.intranet.businesslogic.preferences.UtilsSharedPreferences
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
@@ -49,11 +49,13 @@ class SplashActivity : ComponentActivity() {
         }
         lifecycleScope.launchWhenCreated {
             delay(3000)
-            val intent =
-                if (shared.getBooleanDefault(resources.getResourceName(R.string.user_login), false))
-                    Intent(this@SplashActivity, MainActivity::class.java)
-                else
-                    Intent(this@SplashActivity, WelcomeLSActivity::class.java)
+
+            val intent = Intent(this@SplashActivity, MainActivity::class.java)
+            if (shared.getBooleanDefault(resources.getResourceName(R.string.user_login), false))
+                intent.putExtra("initialScreen", MainDestinations.DASHBOARD_ROUTE)
+            else
+                intent.putExtra("initialScreen", MainDestinations.WELCOME_ROUTE)
+
 
             startActivity(intent)
             finish()

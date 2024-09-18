@@ -2,7 +2,6 @@ package com.app.meditation.domain.repository
 
 import com.app.meditation.ui.activity.main.MainState
 import com.app.meditation.ui.screen.tuneList.DataTunes
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
 interface PlayerRepository {

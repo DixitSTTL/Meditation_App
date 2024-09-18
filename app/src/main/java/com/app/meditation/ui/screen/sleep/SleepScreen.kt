@@ -48,7 +48,10 @@ fun SleepScreen() {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        LazyRow(horizontalArrangement = Arrangement.Absolute.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
+        LazyRow(
+            horizontalArrangement = Arrangement.Absolute.SpaceBetween,
+            modifier = Modifier.fillMaxWidth()
+        ) {
             items(sleepList) {
 
                 SleepItem(it)
@@ -60,7 +63,8 @@ fun SleepScreen() {
         Text(
             text = "Bedtime", color = Color.White, style = TextStyle(
                 fontFamily = FontFamily(Font(R.font.alegreya_bold)), fontSize = 26.sp
-            ))
+            )
+        )
         Spacer(modifier = Modifier.height(16.dp))
 
         Box(
@@ -114,8 +118,6 @@ fun SleepItem(dataTools: DataSleep) {
         )
 
         Spacer(modifier = Modifier.height(30.dp))
-
-
 
 
     }

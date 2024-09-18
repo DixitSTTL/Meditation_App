@@ -46,8 +46,7 @@ fun ToolsScreen(onClick: (DataTools) -> Unit) {
         Text(
             text = "Tools", color = Color.White, style = TextStyle(
                 fontFamily = FontFamily(Font(R.font.alegreya_bold)), fontSize = 26.sp
-            )
-                ,
+            ),
             modifier = Modifier.padding(start = 10.dp)
         )
 

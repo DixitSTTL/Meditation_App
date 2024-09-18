@@ -13,7 +13,7 @@ class MainActions(
     applicationContext: Context,
     appViewModel: AppViewModel
 ) {
-    val navigateToTool={it:String->
+    val navigateToTool = { it: String ->
         navController.navigate(it)
 
     }
@@ -67,9 +67,22 @@ class MainActions(
         appViewModel.setIsVisible(bool)
     }
 
+
+    //login route
+    val navigateLogin = {
+        navController.navigate(MainDestinations.LOGIN_ROUTE)
+    }
+    val navigateSignUp = {
+        navController.navigate(MainDestinations.SIGNUP_ROUTE)
+    }
+    val navigatetoDashboard = {
+        navController.navigate(MainDestinations.DASHBOARD_ROUTE)
+    }
+
 }
 
 object MainDestinations {
+    const val DASHBOARD_ROUTE = "dashboardRoute"
     const val PLAYER_ROUTE = "playerRoute"
 
 
@@ -83,4 +96,8 @@ object MainDestinations {
 
     const val DATA_TUNE_KEY = "data_tune_key"
 
+    //login routes
+    const val WELCOME_ROUTE = "welcomeRoute"
+    const val LOGIN_ROUTE = "loginRoute"
+    const val SIGNUP_ROUTE = "signupRoute"
 }

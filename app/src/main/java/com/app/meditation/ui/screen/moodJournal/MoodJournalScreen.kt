@@ -72,7 +72,9 @@ fun MoodItem(item: MoodJournal) {
                         fontFamily = FontFamily(Font(R.font.alegreya_semi_bold)),
                         fontSize = 20.sp,
                         color = Color.White
-                    ), modifier = Modifier.weight(1f).padding(0.dp, 4.dp)
+                    ), modifier = Modifier
+                        .weight(1f)
+                        .padding(0.dp, 4.dp)
                 )
                 Image(painter = painterResource(item.icon), "", Modifier.size(50.dp))
 

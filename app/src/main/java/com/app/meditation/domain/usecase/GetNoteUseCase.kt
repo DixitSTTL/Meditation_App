@@ -10,13 +10,16 @@ class GetNoteUseCase @Inject constructor(val noteRepository: NoteRepository) {
     suspend fun getNotes(): Flow<List<NoteModel>> {
         return noteRepository.getNotes()
     }
+
     suspend fun insertNote(noteModel: NoteModel) {
         return noteRepository.insertNote(noteModel)
     }
+
     suspend fun updateNote(noteModel: NoteModel) {
         return noteRepository.update(noteModel)
     }
-    suspend fun deleteNotes(noteModel: NoteModel){
+
+    suspend fun deleteNotes(noteModel: NoteModel) {
         return noteRepository.deleteNote(noteModel)
     }
 }

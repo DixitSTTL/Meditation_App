@@ -272,7 +272,8 @@ fun BannerItem(title: String, description: String, res: Int, onClick: () -> Unit
 
             Button(
                 onClick = {
-                    onClick() },
+                    onClick()
+                },
                 shape = RoundedCornerShape(12.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = GreenDark

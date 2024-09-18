@@ -32,7 +32,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.app.meditation.R
 import com.app.meditation.data.model.NoteModel
-import com.app.meditation.ui.screen.login.composable.NoteTextInput
+import com.app.meditation.ui.screen.auth.login.composable.NoteTextInput
 import com.app.meditation.ui.theme.GreenLight
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -92,7 +92,7 @@ fun PositiveNotesScreen(viewmodel: NoteViewModel = hiltViewModel()) {
 
         if (state.dialogVisible) {
             ModalBottomSheet(
-                onDismissRequest={
+                onDismissRequest = {
                     viewmodel.dialogVisibility(false)
                 },
                 containerColor = Color.Black

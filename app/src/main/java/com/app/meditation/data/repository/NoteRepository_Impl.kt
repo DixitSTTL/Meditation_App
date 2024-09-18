@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 class NoteRepository_Impl(var databaseHelper: DatabaseHelper) : NoteRepository {
 
     override suspend fun getNotes(): Flow<List<NoteModel>> {
-       return databaseHelper.noteDao.getAllNotes()
+        return databaseHelper.noteDao.getAllNotes()
     }
 
     override suspend fun insertNote(noteModel: NoteModel) {

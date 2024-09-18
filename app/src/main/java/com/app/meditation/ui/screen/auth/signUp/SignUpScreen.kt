@@ -1,4 +1,4 @@
-package com.app.meditation.ui.screen.signUp
+package com.app.meditation.ui.screen.auth.signUp
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -50,18 +50,10 @@ import com.app.meditation.ui.theme.White90
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SignUpScreen(
-    navigateBack: () -> Unit,
-    clickToSignUp: (String, String, String) -> Unit,
-    navigateSignUp: () -> Unit,
-    showToast: (String) -> Unit,
+    navigateLogin: () -> Unit,
     viewModel: SignUpViewModel = hiltViewModel()
 ) {
-    val mEmailText by viewModel.mEmailText.collectAsState()
-
-    val mNameText by viewModel.mNameText.collectAsState()
-
-    val mPassText by viewModel.mPassText.collectAsState()
-
+    val state by viewModel.state.collectAsState()
 
     Box(
         modifier = Modifier
@@ -119,9 +111,9 @@ fun SignUpScreen(
                     color = EdtColor,
                     fontFamily = FontFamily(Font(R.font.alegreya_regular))
                 ),
-                value = mNameText,
+                value = state.name,
                 onValueChange = {
-                    viewModel.mNameText.value = it
+                    viewModel.updateName(it)
                 },
                 label = {
                     Text(
@@ -133,7 +125,9 @@ fun SignUpScreen(
                 },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions.Default.copy(
-                    imeAction = ImeAction.Next, keyboardType = KeyboardType.Text, capitalization = KeyboardCapitalization.Words
+                    imeAction = ImeAction.Next,
+                    keyboardType = KeyboardType.Text,
+                    capitalization = KeyboardCapitalization.Words
                 ),
                 colors = TextFieldDefaults.textFieldColors(
                     cursorColor = EdtColor,
@@ -154,8 +148,8 @@ fun SignUpScreen(
                     color = EdtColor,
                     fontFamily = FontFamily(Font(R.font.alegreya_regular))
                 ),
-                value = mEmailText, onValueChange = {
-                    viewModel.mEmailText.value = it
+                value = state.email, onValueChange = {
+                    viewModel.updateEmail(it)
                 },
                 label = {
                     Text(
@@ -188,9 +182,9 @@ fun SignUpScreen(
                     color = EdtColor,
                     fontFamily = FontFamily(Font(R.font.alegreya_regular))
                 ),
-                value = mPassText,
+                value = state.password,
                 onValueChange = {
-                    viewModel.mPassText.value = it
+                    viewModel.updatePassword(it)
                 },
                 label = {
                     Text(
@@ -206,10 +200,10 @@ fun SignUpScreen(
                     imeAction = ImeAction.Done, keyboardType = KeyboardType.Password
                 ),
                 keyboardActions = KeyboardActions(onDone = {
-
-                    if (viewModel.validation(showToast)) {
-                        clickToSignUp(mNameText, mEmailText, mPassText)
+                    viewModel.clickToSignUp() {
+                        navigateLogin()
                     }
+
                 }),
                 colors = TextFieldDefaults.textFieldColors(
                     cursorColor = EdtColor,
@@ -227,9 +221,11 @@ fun SignUpScreen(
 
             Button(
                 onClick = {
-                    if (viewModel.validation(showToast)) {
-                        clickToSignUp(mNameText, mEmailText, mPassText)
+
+                    viewModel.clickToSignUp() {
+                        navigateLogin()
                     }
+
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -279,7 +275,7 @@ fun SignUpScreen(
                     modifier = Modifier
                         .padding(horizontal = 4.dp)
                         .clickable {
-                            navigateSignUp()
+                            navigateLogin()
                         }
                 )
             }
@@ -291,10 +287,5 @@ fun SignUpScreen(
     }
 
 
-}
-
-@Composable
-fun PreView() {
-    SignUpScreen({}, { s, s2, s3 -> }, {}, {})
 }
 
