@@ -1,6 +1,5 @@
 package com.app.meditation.ui.screen.positiveNotes
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.app.meditation.data.model.NoteModel
 import com.app.meditation.domain.usecase.GetNoteUseCase
@@ -24,6 +23,9 @@ class NoteViewModel @Inject constructor(
     init {
         getNoteList()
     }
+
+
+
 
     private fun getNoteList() {
 
