@@ -26,10 +26,7 @@ class MainActions(
         navController.popBackStack()
 
     }
-    val navigatePlayer = { dataTune: DataTunes ->
-        navController.navigate("${MainDestinations.PLAYER_ROUTE}/$dataTune")
 
-    }
     val navigateToMeditation = {
         navController.navigate(MainDestinations.MEDITATION_ROUTE)
 
@@ -83,7 +80,6 @@ class MainActions(
 
 object MainDestinations {
     const val DASHBOARD_ROUTE = "dashboardRoute"
-    const val PLAYER_ROUTE = "playerRoute"
 
 
     const val TOOLS_ROUTE = "toolsRoute"
@@ -93,8 +89,6 @@ object MainDestinations {
     const val MOOD_BOOSTER = "boosterRoute"
     const val POSITIVE_NOTES = "notesRoute"
 
-
-    const val DATA_TUNE_KEY = "data_tune_key"
 
     //login routes
     const val WELCOME_ROUTE = "welcomeRoute"

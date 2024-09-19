@@ -6,6 +6,7 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -22,6 +23,8 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -110,18 +113,19 @@ fun PlayerScreen(dataTunes: DataTunes, viewmodel: PlayerViewModel = hiltViewMode
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        Row(verticalAlignment = Alignment.CenterVertically) {
+        Row(modifier = Modifier.fillMaxWidth(),verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween) {
 
-            Button(onClick = { /*TODO*/ }) {
 
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_shuffle),
-                    contentDescription = "",
-                    tint = Color.White
-                )
+                IconButton({}) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_shuffle),
+                        contentDescription = "",
+                        tint = Color.White
+                    )
+                }
 
-            }
-            Button(onClick = { /*TODO*/ }) {
+
+            IconButton({}) {
 
                 Icon(
                     painter = painterResource(id = R.drawable.ic_backward),
@@ -132,10 +136,10 @@ fun PlayerScreen(dataTunes: DataTunes, viewmodel: PlayerViewModel = hiltViewMode
             }
 
             AnimatedVisibility(visible = state.isPrepared) {
-                Button(onClick = {
+                IconButton({
 
                     viewmodel.playPauseAudio()
-                }) {
+                }, modifier = Modifier.size(60.dp)) {
 
                     Icon(
                         painter = painterResource(
@@ -147,7 +151,7 @@ fun PlayerScreen(dataTunes: DataTunes, viewmodel: PlayerViewModel = hiltViewMode
                         ),
                         contentDescription = "",
                         tint = Color.White,
-                        modifier = Modifier.size(45.dp)
+                        modifier = Modifier.size(60.dp)
                     )
 
                 }
@@ -162,7 +166,7 @@ fun PlayerScreen(dataTunes: DataTunes, viewmodel: PlayerViewModel = hiltViewMode
             }
 
 
-            Button(onClick = { /*TODO*/ }) {
+            IconButton({}) {
 
                 Icon(
                     painter = painterResource(id = R.drawable.ic_forward),
@@ -172,10 +176,11 @@ fun PlayerScreen(dataTunes: DataTunes, viewmodel: PlayerViewModel = hiltViewMode
 
             }
 
-            Button(
+            IconButton(
                 onClick = {
                     viewmodel.setLooping(!state.isLooping)
-                }, shape = RoundedCornerShape(50), colors = ButtonDefaults.buttonColors(
+                },
+                colors = IconButtonDefaults.iconButtonColors(
                     containerColor = if (state.isLooping) Color.White else Color.Transparent
                 )
             ) {

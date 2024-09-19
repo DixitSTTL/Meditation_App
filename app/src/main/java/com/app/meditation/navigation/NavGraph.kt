@@ -148,29 +148,6 @@ fun NavGraph(
 
             }
 
-            composable(
-                route = "${MainDestinations.PLAYER_ROUTE}/{${MainDestinations.DATA_TUNE_KEY}}",
-                arguments = listOf(
-                    navArgument(MainDestinations.DATA_TUNE_KEY) { type = DataTunesArgType() }
-                )
-            ) { backStackEntry: NavBackStackEntry ->
-
-                val arguments = requireNotNull(backStackEntry.arguments)
-
-                val dataTunes = arguments.getParcelable<DataTunes>(MainDestinations.DATA_TUNE_KEY)
-
-                dataTunes?.let {
-                    PlayerScreen(
-                        it
-                    )
-                }
-                BackHandler {
-                    actions.navigateBack()
-                    actions.setVisibilityOfPlayer(true)
-
-                }
-
-            }
             composable(route = MainDestinations.MOOD_JOURNAL) { backStackEntry: NavBackStackEntry ->
                 MoodJournalScreen()
 

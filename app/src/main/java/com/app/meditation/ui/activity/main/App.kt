@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -31,6 +32,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -39,10 +41,12 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDrawerState
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -73,6 +77,7 @@ import com.app.meditation.ui.screen.MainActions
 import com.app.meditation.ui.screen.MainDestinations
 import com.app.meditation.ui.screen.auth.login.LoginScreen
 import com.app.meditation.ui.screen.auth.signUp.SignUpScreen
+import com.app.meditation.ui.screen.player.PlayerScreen
 import com.app.meditation.ui.screen.welcome.WelcomeScreen
 import com.app.meditation.ui.theme.GreenDark
 import com.app.meditation.ui.theme.GreenLight
@@ -99,7 +104,8 @@ fun App(
         Box(
             Modifier
                 .fillMaxSize()
-                .background(GreenDark)) {
+                .background(GreenDark)
+        ) {
             NavHost(
                 navController = navController,
                 startDestination = initialScreen
@@ -160,7 +166,9 @@ enum class AppTabs(
 }
 
 @Composable
-fun BottomBar(navController: NavController, tabs: Array<AppTabs>) {
+fun BottomBar(navController: NavController) {
+    val tabs = remember { AppTabs.entries.toTypedArray() }
+
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route ?: AppTabs.HOME.route
 
@@ -231,7 +239,6 @@ fun DashboardScreen(
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route ?: AppTabs.HOME.route
-    val tabs = remember { AppTabs.entries.toTypedArray() }
     val isExpandedScreen = widthSizeClass == WindowWidthSizeClass.Expanded
 
     val sizeAwareDrawerState = rememberSizeAwareDrawerState(isExpandedScreen)
@@ -240,6 +247,7 @@ fun DashboardScreen(
         MainActions(navController, applicationContext, appViewModel)
     }
     val canNavigateBack = navController.previousBackStackEntry != null
+    val dialogState = remember { mutableStateOf(false) }
 
     val state by appViewModel.getState().collectAsState()
 
@@ -293,7 +301,7 @@ fun DashboardScreen(
                 )
             },
             bottomBar = {
-                BottomBar(navController = navController, tabs)
+                BottomBar(navController = navController)
             }
 
         ) { innerPaddingModifier ->
@@ -311,108 +319,138 @@ fun DashboardScreen(
                 )
 
                 if (state.isVisible) {
-                    Card(
-                        modifier = Modifier
+
+                    PlayerCard(
+                        Modifier
                             .padding(12.dp, 4.dp)
                             .fillMaxWidth()
                             .align(Alignment.BottomCenter)
                             .clickable {
-                                navigationActions.navigatePlayer(state.dataTune)
-                                navigationActions.setVisibilityOfPlayer(false)
-
-                            },
-                        shape = RoundedCornerShape(12),
-                        colors = CardDefaults.elevatedCardColors(
-                            containerColor = GreenLight
-                        )
-                    ) {
-
-                        Row(
-                            modifier = Modifier
-                                .padding(8.dp, 6.dp, 8.dp, 4.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            AsyncImage(
-                                model = state.dataTune.image,
-                                contentDescription = "item.name",
-                                modifier = Modifier
-                                    .size(42.dp)
-                                    .clip(shape = RoundedCornerShape(16)),
-                                contentScale = ContentScale.Crop
-                            )
-
-                            Spacer(modifier = Modifier.width(10.dp))
-
-                            Column(
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .align(Alignment.Top)
-                            ) {
-                                Text(
-                                    text = state.dataTune.name.toString(),
-                                    style = TextStyle(
-                                        fontFamily = FontFamily(Font(R.font.alegreya_semi_bold)),
-                                        fontSize = 16.sp,
-                                        color = Color.White
-                                    )
-                                )
-                                Text(
-                                    text = "${state.dataTune.listener} Monthly listenersff",
-                                    style = TextStyle(
-                                        fontFamily = FontFamily(Font(R.font.alegreya_regular)),
-                                        fontSize = 12.sp,
-                                        color = Color.White
-                                    )
-                                )
-
-
-                            }
-
-                            Spacer(modifier = Modifier.width(16.dp))
-
-                            AnimatedVisibility(visible = state.isPrepared) {
-                                Icon(
-                                    painter = painterResource(
-                                        id = if (state.isPlaying) {
-                                            R.drawable.ic_pause
-                                        } else {
-                                            R.drawable.ic_play
-                                        }
-                                    ),
-                                    contentDescription = "",
-                                    tint = Color.White,
-                                    modifier = Modifier
-                                        .size(32.dp)
-                                        .clickable {
-                                            appViewModel.playPauseAudio()
-                                        }
-                                )
-                            }
-
-                            AnimatedVisibility(visible = !state.isPrepared) {
-                                CircularProgressIndicator(
-                                    modifier = Modifier,
-                                    color = Color.White,
-                                    strokeWidth = 2.dp
-                                )
-                            }
-                        }
-
-                        LinearProgressIndicator(
-                            progress = state.currentProgress,
-                            color = Color.White,
-                            trackColor = White30,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(2.dp)
-                                .padding(horizontal = 10.dp)
-                                .clip(shape = RoundedCornerShape(50))
-                        )
-                    }
+                                dialogState.value = true
+                            }, appViewModel = appViewModel
+                    )
                 }
             }
         }
+
+        if (dialogState.value) {
+            ModalBottomSheet(
+                onDismissRequest = {
+                    dialogState.value = false
+
+                },
+                sheetState = rememberModalBottomSheetState(
+                    skipPartiallyExpanded = true,
+                    confirmValueChange = { true }
+                ),
+                containerColor = GreenDark,
+                shape = RoundedCornerShape(0),
+                dragHandle = {
+                    BottomSheetDefaults.DragHandle(color = Color.White)
+                }
+            ) {
+                PlayerScreen(dataTunes = state.dataTune)
+
+            }
+        }
+
     }
 
+
+}
+
+@Composable
+fun PlayerCard(modifier: Modifier, appViewModel: AppViewModel) {
+    val state by appViewModel.getState().collectAsState()
+    Card(
+        modifier = modifier,
+        shape = RoundedCornerShape(12),
+        colors = CardDefaults.elevatedCardColors(
+            containerColor = GreenLight
+        )
+    ) {
+
+        Row(
+            modifier = Modifier
+                .padding(8.dp, 6.dp, 8.dp, 4.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            AsyncImage(
+                model = state.dataTune.image,
+                contentDescription = "item.name",
+                modifier = Modifier
+                    .size(42.dp)
+                    .clip(shape = RoundedCornerShape(16)),
+                contentScale = ContentScale.Crop
+            )
+
+            Spacer(modifier = Modifier.width(10.dp))
+
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .align(Alignment.Top)
+            ) {
+                Text(
+                    text = state.dataTune.name.toString(),
+                    style = TextStyle(
+                        fontFamily = FontFamily(Font(R.font.alegreya_semi_bold)),
+                        fontSize = 16.sp,
+                        color = Color.White
+                    )
+                )
+                Text(
+                    text = "${state.dataTune.listener} Monthly listenersff",
+                    style = TextStyle(
+                        fontFamily = FontFamily(Font(R.font.alegreya_regular)),
+                        fontSize = 12.sp,
+                        color = Color.White
+                    )
+                )
+
+
+            }
+
+            Spacer(modifier = Modifier.width(16.dp))
+
+            AnimatedVisibility(visible = state.isPrepared) {
+                Icon(
+                    painter = painterResource(
+                        id = if (state.isPlaying) {
+                            R.drawable.ic_pause
+                        } else {
+                            R.drawable.ic_play
+                        }
+                    ),
+                    contentDescription = "",
+                    tint = Color.White,
+                    modifier = Modifier
+                        .size(32.dp)
+                        .clickable {
+                            appViewModel.playPauseAudio()
+                        }
+                )
+            }
+
+            AnimatedVisibility(visible = !state.isPrepared) {
+                CircularProgressIndicator(
+                    modifier = Modifier,
+                    color = Color.White,
+                    strokeWidth = 2.dp
+                )
+            }
+        }
+
+        LinearProgressIndicator(
+            progress = state.currentProgress,
+            color = Color.White,
+            trackColor = White30,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(2.dp)
+                .padding(horizontal = 10.dp)
+                .clip(shape = RoundedCornerShape(50))
+        )
+    }
 
 }
