@@ -6,7 +6,7 @@ import javax.inject.Inject
 
 class GetTuneListUseCase @Inject constructor(val tuneRepository: TuneRepository) {
 
-    suspend fun getTunes(): MutableList<DataTunes> {
+    suspend fun getTunes(): List<DataTunes> {
         return tuneRepository.getTunes()
     }
 }

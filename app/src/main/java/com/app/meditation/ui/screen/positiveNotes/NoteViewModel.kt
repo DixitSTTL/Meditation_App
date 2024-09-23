@@ -8,6 +8,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -18,7 +19,7 @@ class NoteViewModel @Inject constructor(
     ViewModel() {
 
     private val _state: MutableStateFlow<NoteState> by lazy { MutableStateFlow(NoteState()) }
-    val state: StateFlow<NoteState> = _state
+    val state: StateFlow<NoteState> = _state.asStateFlow()
 
     init {
         getNoteList()

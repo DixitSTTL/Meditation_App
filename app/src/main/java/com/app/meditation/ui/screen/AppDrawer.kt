@@ -44,6 +44,7 @@ fun AppDrawer(
     navigateToMeditation: () -> Unit,
     navigateToTools: () -> Unit,
     navigateToSleep: () -> Unit,
+    navigateToLogin: () -> Unit,
     closeDrawer: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -111,6 +112,26 @@ fun AppDrawer(
                     },
                     selected = currentRoute == JetnewsDestinations.INTERESTS_ROUTE,
                     onClick = { navigateToSleep(); closeDrawer() },
+                    modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
+                )
+                Spacer(modifier = Modifier.height(6.dp))
+
+                NavigationDrawerItem(
+                    label = {
+                        Text(
+                            stringResource(id = R.string.logout),
+                            fontFamily = FontFamily(Font(R.font.alegreya_semi_bold))
+                        )
+                    },
+                    icon = {
+                        Icon(
+                            painterResource(id = R.drawable.ic_sleep),
+                            null,
+                            Modifier.size(26.dp)
+                        )
+                    },
+                    selected = currentRoute == JetnewsDestinations.INTERESTS_ROUTE,
+                    onClick = { closeDrawer();navigateToLogin();  },
                     modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
                 )
             }

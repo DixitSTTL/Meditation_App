@@ -5,7 +5,7 @@ import com.app.meditation.database.DatabaseHelper
 import com.app.meditation.domain.repository.NoteRepository
 import kotlinx.coroutines.flow.Flow
 
-class NoteRepository_Impl(var databaseHelper: DatabaseHelper) : NoteRepository {
+class NoteRepositoryImpl(private var databaseHelper: DatabaseHelper) : NoteRepository {
 
     override suspend fun getNotes(): Flow<List<NoteModel>> {
         return databaseHelper.noteDao.getAllNotes()

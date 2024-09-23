@@ -6,6 +6,7 @@ import com.app.meditation.domain.usecase.GetTuneListUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -15,11 +16,8 @@ class TuneViewModel @Inject constructor(
 ) :
     ViewModel() {
 
-    private val _musicList = MutableStateFlow<MutableList<DataTunes>>(mutableListOf())
-    val musicList get() = _musicList.asStateFlow()
-
-    private val _isLoading = MutableStateFlow(true)
-    val isLoading get() = _isLoading.asStateFlow()
+    private val _state=MutableStateFlow(TuneListState())
+    val state=_state.asStateFlow()
 
     init {
         getTunes()
@@ -27,11 +25,16 @@ class TuneViewModel @Inject constructor(
 
     private fun getTunes() {
 
-        _isLoading.value = true
+        _state.update {
+            it.copy(isLoading = true)
+        }
         viewModelScope.launch {
-            val dataList = getTuneListUseCase.getTunes()
-            _isLoading.value = false
-            _musicList.value = dataList
+            val responseList = getTuneListUseCase.getTunes()
+
+            _state.update {
+                it.copy(isLoading = false,dataList = responseList   )
+            }
+
         }
     }
 

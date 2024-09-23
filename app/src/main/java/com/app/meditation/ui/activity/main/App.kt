@@ -21,7 +21,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.BottomSheetDefaults
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -60,12 +62,15 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.app.MyApp
@@ -92,7 +97,7 @@ fun App(
     widthSizeClass: WindowWidthSizeClass,
     finishActivity: () -> Unit,
     appViewModel: AppViewModel,
-    initialScreen: String = MainDestinations.WELCOME_ROUTE,
+    initialScreen: String = MainDestinations.AUTH_ROUTE,
 ) {
 
     MeditationAppTheme {
@@ -111,44 +116,57 @@ fun App(
                 startDestination = initialScreen
             ) {
 
-                composable(MainDestinations.WELCOME_ROUTE) {
-                    // Intercept back in Onboarding: make it finish the activity
-                    BackHandler {
-                        finishActivity()
+                navigation(MainDestinations.WELCOME_ROUTE,MainDestinations.AUTH_ROUTE){
+                    composable(MainDestinations.WELCOME_ROUTE) {
+                        // Intercept back in Onboarding: make it finish the activity
+                        BackHandler {
+                            finishActivity()
+                        }
+                        WelcomeScreen(
+                            navigateLogin = { navigationActions.navigateLogin() },
+                            navigateSignUp = { navigationActions.navigateSignUp() }
+                        )
+
                     }
-                    WelcomeScreen(
-                        navigateLogin = { navigationActions.navigateLogin() },
-                        navigateSignUp = { navigationActions.navigateSignUp() }
-                    )
 
+                    composable(MainDestinations.LOGIN_ROUTE) { backStackEntry: NavBackStackEntry ->
+                        LoginScreen(
+                            navigateSignUp = {
+                                navigationActions.navigateSignUp()
+                            },
+
+                            navigateMainActivity = {
+                                navigationActions.navigatetoDashboard()
+                            },
+                            showToast = { str -> navigationActions.showToast(str) }
+                        )
+
+
+                    }
+
+                    composable(MainDestinations.SIGNUP_ROUTE) { backStackEntry: NavBackStackEntry ->
+                        SignUpScreen(
+                            navigateLogin = { navigationActions.navigateLogin() },
+                        )
+
+                    }
                 }
 
-                composable(MainDestinations.LOGIN_ROUTE) { backStackEntry: NavBackStackEntry ->
-                    LoginScreen(
-                        navigateSignUp = {
-                            navigationActions.navigateSignUp()
-                        },
 
-                        navigateMainActivity = {
-                            navigationActions.navigatetoDashboard()
-                        },
-                        showToast = { str -> navigationActions.showToast(str) }
-                    )
+                navigation(MainDestinations.DASHBOARD_ROUTE,MainDestinations.MAIN_SCREEN){
+                    composable(MainDestinations.DASHBOARD_ROUTE) { backStackEntry: NavBackStackEntry ->
+                        DashboardScreen(widthSizeClass = widthSizeClass,
+                            finishActivity,
+                            onLogoutClick=  {
+                                navigationActions.navigateToAuth()
 
+                            })
 
+                    }
                 }
 
-                composable(MainDestinations.SIGNUP_ROUTE) { backStackEntry: NavBackStackEntry ->
-                    SignUpScreen(
-                        navigateLogin = { navigationActions.navigateLogin() },
-                    )
 
-                }
 
-                composable(MainDestinations.DASHBOARD_ROUTE) { backStackEntry: NavBackStackEntry ->
-                    DashboardScreen(widthSizeClass = widthSizeClass, finishActivity)
-
-                }
 
 
             }
@@ -233,7 +251,8 @@ fun DashboardScreen(
     widthSizeClass: WindowWidthSizeClass,
     finishActivity: () -> Unit,
     applicationContext: Context = MyApp.INSTANCE,
-    appViewModel: AppViewModel = hiltViewModel()
+    appViewModel: AppViewModel = hiltViewModel(),
+    onLogoutClick: ()->Unit
 ) {
 
     val navController = rememberNavController()
@@ -258,6 +277,7 @@ fun DashboardScreen(
                 navigateToMeditation = navigationActions.navigateToMeditation,
                 navigateToTools = navigationActions.navigateToTools,
                 navigateToSleep = navigationActions.navigateToSleep,
+                navigateToLogin = { onLogoutClick() },
                 closeDrawer = { coroutineScope.launch { sizeAwareDrawerState.close() } }
             )
         },

@@ -19,7 +19,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
 
-        val initialScreen = intent.getStringExtra("initialScreen") ?: MainDestinations.WELCOME_ROUTE
+        val initialScreen = intent.getStringExtra("initialScreen") ?: MainDestinations.AUTH_ROUTE
         setContent {
             val widthSizeClass = calculateWindowSizeClass(this).widthSizeClass
             App(applicationContext, widthSizeClass, {

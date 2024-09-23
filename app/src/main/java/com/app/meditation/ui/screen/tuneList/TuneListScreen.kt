@@ -1,7 +1,5 @@
 package com.app.meditation.ui.screen.tuneList
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -45,8 +43,7 @@ import com.app.meditation.ui.theme.White90
 @Composable
 fun TuneListScreen(dataTunes: (DataTunes) -> Unit, viewmodel: TuneViewModel = hiltViewModel()) {
 
-    val list by viewmodel.musicList.collectAsState()
-    val isLoading by viewmodel.isLoading.collectAsState()
+    val state by viewmodel.state.collectAsState()
 
     LaunchedEffect(Unit) {
 //        viewmodel.getTunes()
@@ -144,9 +141,8 @@ fun TuneListScreen(dataTunes: (DataTunes) -> Unit, viewmodel: TuneViewModel = hi
             }
         }
 
-        item {
-            AnimatedVisibility(visible = isLoading, exit = fadeOut()) {
-
+        if (state.isLoading) {
+            item {
                 Box(modifier = Modifier.fillMaxWidth()) {
                     CircularProgressIndicator(
                         modifier = Modifier
@@ -156,10 +152,10 @@ fun TuneListScreen(dataTunes: (DataTunes) -> Unit, viewmodel: TuneViewModel = hi
                     )
                 }
             }
-
         }
 
-        itemsIndexed(list) { i, item ->
+
+        itemsIndexed(state.dataList) { i, item ->
 
             TuneItem(item, dataTunes)
 

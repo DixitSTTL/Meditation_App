@@ -75,13 +75,17 @@ class MainActions(
     val navigatetoDashboard = {
         navController.navigate(MainDestinations.DASHBOARD_ROUTE)
     }
+    val navigateToAuth = {
+        navController.navigate(MainDestinations.AUTH_ROUTE)
+    }
 
 }
 
 object MainDestinations {
+
+
+    const val MAIN_SCREEN = "mainRoute"
     const val DASHBOARD_ROUTE = "dashboardRoute"
-
-
     const val TOOLS_ROUTE = "toolsRoute"
     const val MEDITATION_ROUTE = "meditationRoute"
     const val SLEEP_ROUTE = "sleepRoute"
@@ -91,6 +95,7 @@ object MainDestinations {
 
 
     //login routes
+    const val AUTH_ROUTE = "authRoute"
     const val WELCOME_ROUTE = "welcomeRoute"
     const val LOGIN_ROUTE = "loginRoute"
     const val SIGNUP_ROUTE = "signupRoute"

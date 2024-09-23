@@ -52,9 +52,9 @@ class SplashActivity : ComponentActivity() {
 
             val intent = Intent(this@SplashActivity, MainActivity::class.java)
             if (shared.getBooleanDefault(resources.getResourceName(R.string.user_login), false))
-                intent.putExtra("initialScreen", MainDestinations.DASHBOARD_ROUTE)
+                intent.putExtra("initialScreen", MainDestinations.MAIN_SCREEN)
             else
-                intent.putExtra("initialScreen", MainDestinations.WELCOME_ROUTE)
+                intent.putExtra("initialScreen", MainDestinations.AUTH_ROUTE)
 
 
             startActivity(intent)
