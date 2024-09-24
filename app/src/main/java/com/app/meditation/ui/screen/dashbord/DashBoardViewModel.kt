@@ -2,7 +2,7 @@ package com.app.meditation.ui.screen.dashbord
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.app.meditation.domain.usecase.GetUseDataUseCase
+import com.app.meditation.domain.usecase.GetDashboardUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,7 +13,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DashBoardViewModel @Inject constructor(
-    private var getUseDataUseCase: GetUseDataUseCase,
+    private var getDashboardUseCase: GetDashboardUseCase,
 ) :
     ViewModel() {
 
@@ -28,7 +28,7 @@ class DashBoardViewModel @Inject constructor(
 
         viewModelScope.launch(Dispatchers.IO) {
             _state.update { data ->
-                data.copy(userName = getUseDataUseCase.getUserName())
+                data.copy(userName = getDashboardUseCase.getFirstName())
             }
         }
 

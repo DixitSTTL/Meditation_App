@@ -1,7 +1,7 @@
 package com.app.meditation.data.repository
 
-import android.util.Log
 import com.app.MyApp
+import com.app.meditation.R
 import com.app.meditation.common.Resource
 import com.app.meditation.data.model.ModelSignIn
 import com.app.meditation.domain.repository.AuthRepository
@@ -13,13 +13,11 @@ import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
-import java.io.File
-import java.io.FileInputStream
 import java.io.InputStream
+import java.util.Date
 
 class AuthRepositoryImpl(
     private var utilsSharedPreferences: UtilsSharedPreferences,
@@ -37,7 +35,6 @@ class AuthRepositoryImpl(
 
             val response = firebaseApp.signInWithEmailAndPassword(email, password).await()
 
-
             emit(value = Resource.Success(data = response))
 
 
@@ -49,7 +46,6 @@ class AuthRepositoryImpl(
     override suspend fun signUpUser(
         modelSignIn: ModelSignIn
     ): Flow<Resource<AuthResult>> {
-        val reference = firebaseStorage.reference.child("userProfile")
 
 
         return flow<Resource<AuthResult>> {
@@ -65,6 +61,7 @@ class AuthRepositoryImpl(
 
             }
             else{
+                val reference = firebaseStorage.reference.child("userProfile/${modelSignIn.uId}")
 
                 val stream: InputStream = withContext(Dispatchers.IO) {
                     applicationContext.contentResolver.openInputStream(modelSignIn.uri)!!  // Replace FileInputStream
@@ -80,29 +77,46 @@ class AuthRepositoryImpl(
 
                 }
                 else{
-                    val data=  firestore.collection("users").document(modelSignIn.uId!!).set(
+                    firestore.collection("users").document(modelSignIn.uId!!).set(
                         hashMapOf(
-                            "name" to modelSignIn.name,
+                            "firstName" to modelSignIn.firstName,
+                            "lastName" to modelSignIn.lastName,
                             "email" to modelSignIn.email,
                             "password" to modelSignIn.password,
-                            "imageURL" to imageURL
+                            "imageURL" to imageURL,
+                            "createdAt" to Date()
                         )
                     ).await()
 
                     emit(Resource.Success(data = responseAuth))
                 }
-
-
             }
-
-
-
-
         }.catch {
             emit(value = Resource.Error(message = it.message.toString()))
         }
     }
 
+    override suspend fun saveUserData(uId: String): Flow<Resource<Boolean>> {
 
+
+        return flow{
+            emit(value = Resource.Loading())
+            val response = firestore.collection("users").document(uId).get().await()
+            response.data?.let {
+
+                utilsSharedPreferences.setBoolean(applicationContext.resources.getResourceName(R.string.user_login),true)
+                utilsSharedPreferences.setString(applicationContext.resources.getResourceName(R.string.user_uid),uId)
+                utilsSharedPreferences.setString(applicationContext.resources.getResourceName(R.string.user_name),it["firstName"].toString()+" "+it["lastName"].toString())
+                utilsSharedPreferences.setString(applicationContext.resources.getResourceName(R.string.user_firstname),it["firstName"].toString())
+                utilsSharedPreferences.setString(applicationContext.resources.getResourceName(R.string.user_lastname),it["lastName"].toString())
+                utilsSharedPreferences.setString(applicationContext.resources.getResourceName(R.string.user_email),it["email"].toString())
+                utilsSharedPreferences.setString(applicationContext.resources.getResourceName(R.string.user_img_url),it["imageURL"].toString())
+                emit(value = Resource.Success(data = true))
+
+            }
+        }.catch {
+            emit(value = Resource.Error(message = it.message.toString()))
+        }
+    }
 
 }

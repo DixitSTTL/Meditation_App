@@ -8,7 +8,7 @@ import com.google.firebase.auth.AuthResult
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-class GetAuthUseCase @Inject constructor(val authRepository: AuthRepository) {
+class GetAuthUseCase @Inject constructor(private val authRepository: AuthRepository) {
 
     suspend fun loginToUser(loginState: LoginState): Flow<Resource<AuthResult>> {
         return authRepository.loginUser(loginState.email, loginState.password)
@@ -16,5 +16,8 @@ class GetAuthUseCase @Inject constructor(val authRepository: AuthRepository) {
 
     suspend fun signUpUser(modelSignIn: ModelSignIn): Flow<Resource<AuthResult>>  {
         return authRepository.signUpUser(modelSignIn)
+    }
+    suspend fun saveUserData(uId: String): Flow<Resource<Boolean>>  {
+        return authRepository.saveUserData(uId)
     }
 }

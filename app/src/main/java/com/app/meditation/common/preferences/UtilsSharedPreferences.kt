@@ -31,8 +31,8 @@ class UtilsSharedPreferences {
         mPreferences.edit().putBoolean(prefName, value).apply()
     }
 
-    fun getString(prefName: String?): String? {
-        return mPreferences.getString(prefName, "")
+    fun getString(prefName: String?): String {
+        return mPreferences.getString(prefName, "")?:""
     }
 
     fun getStringDefault(prefName: String?, defaultValue: String?): String? {

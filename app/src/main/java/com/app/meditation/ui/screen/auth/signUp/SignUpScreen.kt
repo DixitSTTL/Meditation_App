@@ -1,10 +1,11 @@
 package com.app.meditation.ui.screen.auth.signUp
 
-import android.util.Log
+import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -22,7 +23,10 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -44,11 +48,11 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.app.meditation.R
@@ -61,20 +65,14 @@ import com.app.meditation.ui.theme.White90
 @Composable
 fun SignUpScreen(
     navigateLogin: () -> Unit,
+    navigateAlreadyLogin: () -> Unit,
     viewModel: SignUpViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsState()
-    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
-
-        uri?.let { viewModel.updateImage(it) }
-
-    }
-    val painter = rememberAsyncImagePainter(
-        ImageRequest
-            .Builder(LocalContext.current)
-            .data(data = if (state.imageUri==null) R.drawable.ic_tab_profile else state.imageUri)
-            .build()
-    )
+    val launcher =
+        rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+            uri?.let { viewModel.updateImage(it) }
+        }
 
     Box(
         modifier = Modifier
@@ -89,6 +87,13 @@ fun SignUpScreen(
                 .align(Alignment.BottomCenter),
             contentScale = ContentScale.Crop
         )
+
+        if (state.isLoading) {
+            CircularProgressIndicator(
+                modifier = Modifier.align(Alignment.Center),
+                color = GreenLight
+            )
+        }
 
         Column(modifier = Modifier.padding(horizontal = 20.dp)) {
 
@@ -124,24 +129,19 @@ fun SignUpScreen(
             )
 
             Spacer(modifier = Modifier.height(25.dp))
-            Image(
-                painter =  painter,
-                contentDescription = "",
-                modifier = Modifier
-                    .size(100.dp)
-                    .clip(shape = CircleShape)
-                    .clickable {
-//                        viewModel.pickImage()
-                        launcher.launch(
-                            PickVisualMediaRequest(
-                            //Here we request only photos. Change this to .ImageAndVideo if
-                            //you want videos too.
-                            //Or use .VideoOnly if you only want videos.
-                            mediaType = ActivityResultContracts.PickVisualMedia.ImageOnly
-                        )
-                        )
-                    },
-            )
+
+            ProfileImage(state, {
+                launcher.launch(
+                    PickVisualMediaRequest(
+                        //Here we request only photos. Change this to .ImageAndVideo if
+                        //you want videos too.
+                        //Or use .VideoOnly if you only want videos.
+                        mediaType = ActivityResultContracts.PickVisualMedia.ImageOnly
+                    )
+                )
+            })
+
+
             Spacer(modifier = Modifier.height(25.dp))
 
 
@@ -151,13 +151,50 @@ fun SignUpScreen(
                     color = EdtColor,
                     fontFamily = FontFamily(Font(R.font.alegreya_regular))
                 ),
-                value = state.name,
+                value = state.firstName,
                 onValueChange = {
-                    viewModel.updateName(it)
+                    viewModel.updateFirstName(it)
                 },
                 label = {
                     Text(
-                        text = "Name",
+                        text = "First Name",
+                        color = EdtColor,
+                        fontWeight = FontWeight.Light,
+                        fontFamily = FontFamily(Font(R.font.alegreya_regular)),
+                    )
+                },
+                singleLine = true,
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    imeAction = ImeAction.Next,
+                    keyboardType = KeyboardType.Text,
+                    capitalization = KeyboardCapitalization.Words
+                ),
+                colors = TextFieldDefaults.textFieldColors(
+                    cursorColor = EdtColor,
+                    containerColor = Color.Transparent,
+                    focusedIndicatorColor = EdtColor,
+                    unfocusedIndicatorColor = EdtColor,
+                    focusedTextColor = Color.Black,
+                    unfocusedTextColor = Color.Black
+                ),
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            TextField(
+                textStyle = TextStyle(
+                    fontSize = 22.sp,
+                    color = EdtColor,
+                    fontFamily = FontFamily(Font(R.font.alegreya_regular))
+                ),
+                value = state.lastName,
+                onValueChange = {
+                    viewModel.updateLastName(it)
+                },
+                label = {
+                    Text(
+                        text = "Last Name",
                         color = EdtColor,
                         fontWeight = FontWeight.Light,
                         fontFamily = FontFamily(Font(R.font.alegreya_regular)),
@@ -234,8 +271,15 @@ fun SignUpScreen(
                         fontFamily = FontFamily(Font(R.font.alegreya_regular)),
                     )
                 },
+                trailingIcon = {
+                    IconButton(onClick = {
+                        viewModel.updatePasswordVisibility()
+                    }) {
+                        Icon(painter = painterResource(if(state.isPasswordHide) R.drawable.ic_eye else R.drawable.ic_eye_closed) ,"")
+                    }
+                },
                 singleLine = true,
-                visualTransformation = PasswordVisualTransformation(),
+                visualTransformation = if (state.isPasswordHide) PasswordVisualTransformation() else VisualTransformation.None,
                 keyboardOptions = KeyboardOptions.Default.copy(
                     imeAction = ImeAction.Done, keyboardType = KeyboardType.Password
                 ),
@@ -261,12 +305,11 @@ fun SignUpScreen(
 
             Button(
                 onClick = {
-
                     viewModel.clickToSignUp() {
                         navigateLogin()
                     }
-
                 },
+                enabled = !state.isLoading,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(50.dp)
@@ -315,7 +358,7 @@ fun SignUpScreen(
                     modifier = Modifier
                         .padding(horizontal = 4.dp)
                         .clickable {
-                            navigateLogin()
+                            navigateAlreadyLogin()
                         }
                 )
             }
@@ -329,3 +372,38 @@ fun SignUpScreen(
 
 }
 
+@Composable
+fun ProfileImage(state: SignUpState, onClick: () -> Unit) {
+    if (state.imageUri == Uri.EMPTY) {
+        Image(
+            painter = painterResource(R.drawable.ic_tab_profile),
+            contentDescription = "",
+            modifier = Modifier
+                .size(100.dp)
+                .border(2.dp, Color.White, CircleShape)
+                .clickable {
+                    onClick()
+                }
+                .padding(20.dp),
+        )
+    } else {
+        val painter = rememberAsyncImagePainter(
+            ImageRequest
+                .Builder(LocalContext.current)
+                .data(data = state.imageUri)
+                .build()
+        )
+        Image(
+            painter = painter,
+            contentDescription = "",
+            modifier = Modifier
+                .size(100.dp)
+                .clip(shape = CircleShape)
+                .clickable {
+                    onClick()
+                }
+                .padding(),
+            contentScale = ContentScale.Crop,
+        )
+    }
+}

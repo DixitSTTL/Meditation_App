@@ -27,15 +27,22 @@ class SignUpViewModel @Inject constructor(private val myApp: MyApp, private val 
     val state: StateFlow<SignUpState> = _state
 
     private fun validation(): Boolean {
-        if (_state.value.name.isEmpty()) {
-            Toast.makeText(myApp.applicationContext, "Please enter name", Toast.LENGTH_SHORT).show()
+        if (_state.value.firstName.isEmpty()) {
+            Toast.makeText(myApp.applicationContext, "Please enter first name", Toast.LENGTH_SHORT).show()
+            return false
+        } else if (_state.value.lastName.isEmpty()) {
+            Toast.makeText(myApp.applicationContext, "Please enter last name", Toast.LENGTH_SHORT).show()
             return false
         } else if (_state.value.email.isEmpty()) {
-            Toast.makeText(myApp.applicationContext, "Please enter password", Toast.LENGTH_SHORT)
+            Toast.makeText(myApp.applicationContext, "Please enter email", Toast.LENGTH_SHORT)
                 .show()
             return false
         } else if (_state.value.password.isEmpty()) {
             Toast.makeText(myApp.applicationContext, "Please enter password", Toast.LENGTH_SHORT)
+                .show()
+            return false
+        }else if (_state.value.imageUri== Uri.EMPTY) {
+            Toast.makeText(myApp.applicationContext, "Please select profile picture", Toast.LENGTH_SHORT)
                 .show()
             return false
         }
@@ -44,9 +51,15 @@ class SignUpViewModel @Inject constructor(private val myApp: MyApp, private val 
 
     }
 
-    fun updateName(str: String) {
+    fun updateFirstName(str: String) {
         _state.update {
-            it.copy(name = str)
+            it.copy(firstName = str)
+        }
+    }
+
+    fun updateLastName(str: String) {
+        _state.update {
+            it.copy(lastName = str)
         }
     }
 
@@ -71,30 +84,45 @@ class SignUpViewModel @Inject constructor(private val myApp: MyApp, private val 
         }
     }
 
+    fun updatePasswordVisibility() {
+        _state.update {
+            it.copy(isPasswordHide = _state.value.isPasswordHide.not())
+        }
+    }
+
     fun clickToSignUp(navigateLogin: () -> Unit) {
         if (validation()) {
             viewModelScope.launch {
                 val response = authUseCase.signUpUser(ModelSignIn(
-                    name = _state.value.name,
+                    firstName = _state.value.firstName,
+                    lastName = _state.value.lastName,
                     email = _state.value.email,
                     password = _state.value.password,
                     uri = _state.value.imageUri
                 ))
-                response.collectLatest {
-                    when (it) {
-                        is Resource.Loading -> {}
+                response.collectLatest { res ->
+                    when (res) {
+                        is Resource.Loading -> {
+                            _state.update {
+                                it.copy(isLoading = true)
+                            }
+                        }
                         is Resource.Error -> {
-
-                            Log.d("error:::->",""+it.message)
+                            _state.update {
+                                it.copy(isLoading = false)
+                            }
+                            Log.d("error:::->",""+res.message)
                         }
                         is Resource.Success -> {
+                            _state.update {
+                                it.copy(isLoading = false)
+                            }
                             navigateLogin()
                         }
                     }
                 }
             }
         }
-
     }
 
 }

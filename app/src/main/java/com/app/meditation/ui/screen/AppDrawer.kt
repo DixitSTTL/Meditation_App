@@ -40,7 +40,6 @@ import com.app.meditation.ui.theme.GreenDark
 
 @Composable
 fun AppDrawer(
-    currentRoute: String?,
     navigateToMeditation: () -> Unit,
     navigateToTools: () -> Unit,
     navigateToSleep: () -> Unit,
@@ -53,97 +52,37 @@ fun AppDrawer(
             Column {
 
                 Spacer(modifier = Modifier.height(20.dp))
-
-                NavigationDrawerItem(
-                    label = {
-                        Text(
-                            stringResource(id = R.string.meditation),
-                            fontFamily = FontFamily(Font(R.font.alegreya_semi_bold))
-                        )
-                    },
-                    icon = {
-                        Icon(
-                            painterResource(id = R.drawable.ic_focus),
-                            null,
-                            Modifier.size(26.dp)
-                        )
-                    },
-                    selected = currentRoute == JetnewsDestinations.HOME_ROUTE,
-                    onClick = { navigateToMeditation(); closeDrawer() },
-                    modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
-                )
-
+                NavItem(text = R.string.meditation, icon = R.drawable.ic_focus, onclick = {closeDrawer();navigateToMeditation(); } )
                 Spacer(modifier = Modifier.height(6.dp))
-
-                NavigationDrawerItem(
-                    label = {
-                        Text(
-                            stringResource(id = R.string.tools),
-                            fontFamily = FontFamily(Font(R.font.alegreya_semi_bold))
-                        )
-                    },
-                    icon = {
-                        Icon(
-                            painterResource(id = R.drawable.ic_journal),
-                            null,
-                            Modifier.size(26.dp)
-                        )
-                    },
-                    selected = currentRoute == JetnewsDestinations.INTERESTS_ROUTE,
-                    onClick = { navigateToTools(); closeDrawer() },
-                    modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
-                )
-
+                NavItem(text = R.string.tools, icon = R.drawable.ic_journal, onclick = {closeDrawer();navigateToTools(); } )
                 Spacer(modifier = Modifier.height(6.dp))
-
-                NavigationDrawerItem(
-                    label = {
-                        Text(
-                            stringResource(id = R.string.sleep),
-                            fontFamily = FontFamily(Font(R.font.alegreya_semi_bold))
-                        )
-                    },
-                    icon = {
-                        Icon(
-                            painterResource(id = R.drawable.ic_sleep),
-                            null,
-                            Modifier.size(26.dp)
-                        )
-                    },
-                    selected = currentRoute == JetnewsDestinations.INTERESTS_ROUTE,
-                    onClick = { navigateToSleep(); closeDrawer() },
-                    modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
-                )
+                NavItem(text = R.string.sleep, icon = R.drawable.ic_sleep, onclick = {closeDrawer();navigateToSleep(); } )
                 Spacer(modifier = Modifier.height(6.dp))
+                NavItem(text = R.string.logout, icon = R.drawable.ic_logout, onclick = {closeDrawer();navigateToLogin(); } )
 
-                NavigationDrawerItem(
-                    label = {
-                        Text(
-                            stringResource(id = R.string.logout),
-                            fontFamily = FontFamily(Font(R.font.alegreya_semi_bold))
-                        )
-                    },
-                    icon = {
-                        Icon(
-                            painterResource(id = R.drawable.ic_sleep),
-                            null,
-                            Modifier.size(26.dp)
-                        )
-                    },
-                    selected = currentRoute == JetnewsDestinations.INTERESTS_ROUTE,
-                    onClick = { closeDrawer();navigateToLogin();  },
-                    modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
-                )
             }
-
         }
-
-
     }
 }
 
-
-object JetnewsDestinations {
-    const val HOME_ROUTE = "home"
-    const val INTERESTS_ROUTE = "interests"
+@Composable
+fun NavItem(text: Int,icon:Int,onclick:()->Unit) {
+    NavigationDrawerItem(
+        label = {
+            Text(
+                stringResource(id = text),
+                fontFamily = FontFamily(Font(R.font.alegreya_semi_bold))
+            )
+        },
+        icon = {
+            Icon(
+                painterResource(id = icon),
+                null,
+                Modifier.size(26.dp)
+            )
+        },
+        selected = false,
+        onClick = { onclick()  },
+        modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
+    )
 }

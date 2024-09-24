@@ -147,6 +147,7 @@ fun App(
                     composable(MainDestinations.SIGNUP_ROUTE) { backStackEntry: NavBackStackEntry ->
                         SignUpScreen(
                             navigateLogin = { navigationActions.navigateLogin() },
+                            navigateAlreadyLogin = { navigationActions.navigateBack() },
                         )
 
                     }
@@ -273,11 +274,10 @@ fun DashboardScreen(
     ModalNavigationDrawer(
         drawerContent = {
             AppDrawer(
-                currentRoute = currentRoute,
                 navigateToMeditation = navigationActions.navigateToMeditation,
                 navigateToTools = navigationActions.navigateToTools,
                 navigateToSleep = navigationActions.navigateToSleep,
-                navigateToLogin = { onLogoutClick() },
+                navigateToLogin = { appViewModel.logoutUser();onLogoutClick() },
                 closeDrawer = { coroutineScope.launch { sizeAwareDrawerState.close() } }
             )
         },

@@ -8,4 +8,5 @@ import kotlinx.coroutines.flow.Flow
 interface AuthRepository {
     suspend fun loginUser(email: String, password: String): Flow<Resource<AuthResult>>
     suspend fun signUpUser(modelSignIn: ModelSignIn): Flow<Resource<AuthResult>>
+    suspend fun saveUserData(uId: String): Flow<Resource<Boolean>>
 }

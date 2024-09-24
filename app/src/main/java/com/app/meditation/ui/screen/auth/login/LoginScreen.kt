@@ -1,5 +1,6 @@
 package com.app.meditation.ui.screen.auth.login
 
+import android.widget.ImageButton
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -17,7 +18,10 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -36,6 +40,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -71,6 +76,13 @@ fun LoginScreen(
                 .align(Alignment.BottomCenter),
             contentScale = ContentScale.Crop
         )
+
+        if (state.isLoading) {
+            CircularProgressIndicator(
+                modifier = Modifier.align(Alignment.Center),
+                color = GreenLight
+            )
+        }
 
         Column(modifier = Modifier.padding(horizontal = 20.dp)) {
 
@@ -160,7 +172,7 @@ fun LoginScreen(
                     )
                 },
                 singleLine = true,
-                visualTransformation = PasswordVisualTransformation(),
+                visualTransformation = if (state.isPasswordHide) PasswordVisualTransformation() else VisualTransformation.None,
                 keyboardOptions = KeyboardOptions.Default.copy(
                     imeAction = ImeAction.Done, keyboardType = KeyboardType.Password
                 ),
@@ -169,6 +181,13 @@ fun LoginScreen(
                         navigateMainActivity()
                     }
                 }),
+                trailingIcon = {
+                    IconButton(onClick = {
+                        viewModel.updatePasswordVisibility()
+                    }) {
+                        Icon(painter = painterResource(if(state.isPasswordHide) R.drawable.ic_eye else R.drawable.ic_eye_closed) ,"")
+                    }
+                },
                 colors = TextFieldDefaults.textFieldColors(
                     cursorColor = EdtColor,
                     containerColor = Color.Transparent,
@@ -191,6 +210,7 @@ fun LoginScreen(
 
 
                 },
+                enabled = !state.isLoading,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(50.dp)
