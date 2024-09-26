@@ -1,6 +1,9 @@
 package com.app.meditation.ui.screen.auth.signUp
 
+import android.Manifest
 import android.net.Uri
+import android.os.Build
+import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -21,6 +24,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -33,6 +37,8 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -52,6 +58,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
@@ -69,10 +76,69 @@ fun SignUpScreen(
     viewModel: SignUpViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsState()
-    val launcher =
+    val imagePickerLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
             uri?.let { viewModel.updateImage(it) }
         }
+    val imagePickerBlock = {
+        imagePickerLauncher.launch(
+            PickVisualMediaRequest(
+
+                mediaType = ActivityResultContracts.PickVisualMedia.ImageOnly
+            )
+        )
+    }
+    val context = LocalContext.current
+    val showRationalDialog = remember { mutableStateOf(false) }
+
+    val imagePermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+        onResult = { permissions ->
+
+            if (permissions) {
+                imagePickerBlock.invoke()
+            } else {
+                val result = shouldShowRequestPermissionRationale(
+                    context as ComponentActivity,
+                    Manifest.permission.READ_MEDIA_IMAGES
+                )
+                showRationalDialog.value = result
+            }
+
+        })
+
+    if (showRationalDialog.value) {
+
+        AlertDialog(
+            onDismissRequest = {
+                showRationalDialog.value = false
+            },
+            title = {
+                Text("Permission Required")
+            },
+            text = {
+                Text("Please grant permission for accessing images")
+
+            },
+            confirmButton = {
+                Button({
+                    showRationalDialog.value = false
+                    imagePermissionLauncher.launch(Manifest.permission.READ_MEDIA_IMAGES)
+                }) {
+                    Text("GRANT", color = Color.White)
+                }
+            },
+            dismissButton = {
+                Button({
+                    showRationalDialog.value = false
+                }) {
+                    Text("CANCEL", color = Color.White)
+                }
+            }
+        )
+    }
+
+
 
     Box(
         modifier = Modifier
@@ -130,17 +196,13 @@ fun SignUpScreen(
 
             Spacer(modifier = Modifier.height(25.dp))
 
-            ProfileImage(state, {
-                launcher.launch(
-                    PickVisualMediaRequest(
-                        //Here we request only photos. Change this to .ImageAndVideo if
-                        //you want videos too.
-                        //Or use .VideoOnly if you only want videos.
-                        mediaType = ActivityResultContracts.PickVisualMedia.ImageOnly
-                    )
-                )
-            })
-
+            ProfileImage(state) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    imagePermissionLauncher.launch(Manifest.permission.READ_MEDIA_IMAGES)
+                } else {
+                    imagePickerBlock.invoke()
+                }
+            }
 
             Spacer(modifier = Modifier.height(25.dp))
 
@@ -275,7 +337,10 @@ fun SignUpScreen(
                     IconButton(onClick = {
                         viewModel.updatePasswordVisibility()
                     }) {
-                        Icon(painter = painterResource(if(state.isPasswordHide) R.drawable.ic_eye else R.drawable.ic_eye_closed) ,"")
+                        Icon(
+                            painter = painterResource(if (state.isPasswordHide) R.drawable.ic_eye else R.drawable.ic_eye_closed),
+                            ""
+                        )
                     }
                 },
                 singleLine = true,

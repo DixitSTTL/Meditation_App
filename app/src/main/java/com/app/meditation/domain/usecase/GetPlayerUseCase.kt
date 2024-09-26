@@ -6,7 +6,7 @@ import com.app.meditation.ui.screen.tuneList.DataTunes
 import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
 
-class GetPlayerUseCase @Inject constructor(val playerRepository: PlayerRepository) {
+class GetPlayerUseCase @Inject constructor(private val playerRepository: PlayerRepository) {
 
 
     suspend fun playPauseAudio() {
