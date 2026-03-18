@@ -2,8 +2,9 @@
 plugins {
     alias(libs.plugins.androidApplication) apply false
     alias(libs.plugins.jetbrainsKotlinAndroid) apply false
-    id("com.google.gms.google-services") version "4.4.1" apply false
+    alias(libs.plugins.compose.compiler) apply false
     alias(libs.plugins.room) apply false
+    id("com.google.gms.google-services") version "4.4.4" apply false
 }
 buildscript {
     repositories {
@@ -11,8 +12,8 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath ("androidx.navigation:navigation-safe-args-gradle-plugin:2.7.7")
-        classpath ("com.google.dagger:hilt-android-gradle-plugin:2.48.1")
+        classpath (libs.androidx.navigation.safe.args.gradle.plugin)
+        classpath (libs.hilt.android.gradle.plugin)
 
     }
 }

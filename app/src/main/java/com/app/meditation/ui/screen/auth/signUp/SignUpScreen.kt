@@ -59,7 +59,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.app.meditation.R
@@ -231,9 +231,10 @@ fun SignUpScreen(
                     keyboardType = KeyboardType.Text,
                     capitalization = KeyboardCapitalization.Words
                 ),
-                colors = TextFieldDefaults.textFieldColors(
+                colors = TextFieldDefaults.colors(
                     cursorColor = EdtColor,
-                    containerColor = Color.Transparent,
+                    focusedContainerColor = Color.Transparent,
+                    unfocusedContainerColor = Color.Transparent,
                     focusedIndicatorColor = EdtColor,
                     unfocusedIndicatorColor = EdtColor,
                     focusedTextColor = Color.Black,
@@ -268,9 +269,10 @@ fun SignUpScreen(
                     keyboardType = KeyboardType.Text,
                     capitalization = KeyboardCapitalization.Words
                 ),
-                colors = TextFieldDefaults.textFieldColors(
+                colors = TextFieldDefaults.colors(
                     cursorColor = EdtColor,
-                    containerColor = Color.Transparent,
+                    focusedContainerColor = Color.Transparent,
+                    unfocusedContainerColor = Color.Transparent,
                     focusedIndicatorColor = EdtColor,
                     unfocusedIndicatorColor = EdtColor,
                     focusedTextColor = Color.Black,
@@ -302,9 +304,10 @@ fun SignUpScreen(
                 keyboardOptions = KeyboardOptions.Default.copy(
                     imeAction = ImeAction.Next, keyboardType = KeyboardType.Email
                 ),
-                colors = TextFieldDefaults.textFieldColors(
+                colors = TextFieldDefaults.colors(
                     cursorColor = EdtColor,
-                    containerColor = Color.Transparent,
+                    focusedContainerColor = Color.Transparent,
+                    unfocusedContainerColor = Color.Transparent,
                     focusedIndicatorColor = EdtColor,
                     unfocusedIndicatorColor = EdtColor,
                     focusedTextColor = Color.Black,
@@ -354,9 +357,10 @@ fun SignUpScreen(
                     }
 
                 }),
-                colors = TextFieldDefaults.textFieldColors(
+                colors = TextFieldDefaults.colors(
                     cursorColor = EdtColor,
-                    containerColor = Color.Transparent,
+                    focusedContainerColor = Color.Transparent,
+                    unfocusedContainerColor = Color.Transparent,
                     focusedIndicatorColor = EdtColor,
                     unfocusedIndicatorColor = EdtColor,
                     focusedTextColor = Color.Black,

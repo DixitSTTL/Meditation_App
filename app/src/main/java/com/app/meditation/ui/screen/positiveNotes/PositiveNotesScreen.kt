@@ -29,7 +29,7 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.app.meditation.R
 import com.app.meditation.data.model.NoteModel
 import com.app.meditation.ui.screen.auth.login.composable.NoteTextInput

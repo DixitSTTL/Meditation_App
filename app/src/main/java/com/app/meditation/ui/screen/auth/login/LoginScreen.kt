@@ -44,7 +44,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.app.meditation.R
 import com.app.meditation.ui.theme.EdtColor
 import com.app.meditation.ui.theme.GreenLight
@@ -140,9 +140,10 @@ fun LoginScreen(
                 keyboardOptions = KeyboardOptions.Default.copy(
                     imeAction = ImeAction.Next, keyboardType = KeyboardType.Email
                 ),
-                colors = TextFieldDefaults.textFieldColors(
+                colors = TextFieldDefaults.colors(
                     cursorColor = EdtColor,
-                    containerColor = Color.Transparent,
+                    focusedContainerColor = Color.Transparent,
+                    unfocusedContainerColor = Color.Transparent,
                     focusedIndicatorColor = EdtColor,
                     unfocusedIndicatorColor = EdtColor,
                     focusedTextColor = Color.Black,
@@ -188,9 +189,10 @@ fun LoginScreen(
                         Icon(painter = painterResource(if(state.isPasswordHide) R.drawable.ic_eye else R.drawable.ic_eye_closed) ,"")
                     }
                 },
-                colors = TextFieldDefaults.textFieldColors(
+                colors = TextFieldDefaults.colors(
                     cursorColor = EdtColor,
-                    containerColor = Color.Transparent,
+                    focusedContainerColor = Color.Transparent,
+                    unfocusedContainerColor = Color.Transparent,
                     focusedIndicatorColor = EdtColor,
                     unfocusedIndicatorColor = EdtColor,
                     focusedTextColor = Color.Black,
