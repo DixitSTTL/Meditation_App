@@ -44,6 +44,7 @@ fun AppDrawer(
     navigateToTools: () -> Unit,
     navigateToSleep: () -> Unit,
     navigateToLogin: () -> Unit,
+    navigateToAiChat: () -> Unit,
     closeDrawer: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -57,6 +58,8 @@ fun AppDrawer(
                 NavItem(text = R.string.tools, icon = R.drawable.ic_journal, onclick = {closeDrawer();navigateToTools(); } )
                 Spacer(modifier = Modifier.height(6.dp))
                 NavItem(text = R.string.sleep, icon = R.drawable.ic_sleep, onclick = {closeDrawer();navigateToSleep(); } )
+                Spacer(modifier = Modifier.height(6.dp))
+                NavItem(text = R.string.ai, icon = R.drawable.ic_quality, onclick = {closeDrawer();navigateToAiChat(); } )
                 Spacer(modifier = Modifier.height(6.dp))
                 NavItem(text = R.string.logout, icon = R.drawable.ic_logout, onclick = {closeDrawer();navigateToLogin(); } )
 

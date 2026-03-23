@@ -36,6 +36,7 @@ import com.app.meditation.ui.activity.main.AppTabs
 import com.app.meditation.ui.activity.main.AppViewModel
 import com.app.meditation.ui.screen.MainActions
 import com.app.meditation.ui.screen.MainDestinations
+import com.app.meditation.ui.screen.ai.AiScreen
 import com.app.meditation.ui.screen.dashbord.DashBoardScreen
 import com.app.meditation.ui.screen.meditation.MeditationScreen
 import com.app.meditation.ui.screen.moodBooster.MoodBoosterScreen
@@ -159,6 +160,10 @@ fun NavGraph(
 
             composable(route = MainDestinations.POSITIVE_NOTES) { backStackEntry: NavBackStackEntry ->
                 PositiveNotesScreen()
+            }
+
+            composable(route = MainDestinations.AICHAT) { backStackEntry: NavBackStackEntry ->
+                AiScreen()
             }
 
         }

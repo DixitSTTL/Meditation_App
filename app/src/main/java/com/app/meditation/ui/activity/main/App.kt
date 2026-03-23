@@ -269,6 +269,7 @@ fun DashboardScreen(
                 navigateToMeditation = navigationActions.navigateToMeditation,
                 navigateToTools = navigationActions.navigateToTools,
                 navigateToSleep = navigationActions.navigateToSleep,
+                navigateToAiChat = navigationActions.navigateToAiChat,
                 navigateToLogin = { appViewModel.logoutUser();onLogoutClick() },
                 closeDrawer = { coroutineScope.launch { sizeAwareDrawerState.close() } }
             )

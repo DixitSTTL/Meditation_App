@@ -14,6 +14,7 @@ fun NoteTextInput(
     value: String,
     placeholder: String,
     minLines: Int,
+    modifier: Modifier,
     onValueChange: (String) -> Unit
 ) {
 
@@ -22,7 +23,7 @@ fun NoteTextInput(
         onValueChange = onValueChange,
         singleLine = minLines <= 1,
         placeholder = { Text(placeholder) },
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(0.dp, 8.dp),
         minLines = minLines

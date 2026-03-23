@@ -55,6 +55,10 @@ class MainActions(
         navController.navigate(MainDestinations.SLEEP_ROUTE)
 
     }
+    val navigateToAiChat = {
+        navController.navigate(MainDestinations.AICHAT)
+
+    }
 
     val prepareAudio = { dataTune: DataTunes ->
         appViewModel.prepareAudio(dataTune)
@@ -92,6 +96,7 @@ object MainDestinations {
     const val MOOD_JOURNAL = "journalRoute"
     const val MOOD_BOOSTER = "boosterRoute"
     const val POSITIVE_NOTES = "notesRoute"
+    const val AICHAT = "aiChat"
 
 
     //login routes

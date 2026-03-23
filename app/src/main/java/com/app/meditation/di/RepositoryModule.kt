@@ -2,6 +2,7 @@ package com.app.meditation.di
 
 import com.app.MyApp
 import com.app.meditation.common.util.CustomMediaPlayer
+import com.app.meditation.data.repository.AiRepositoryImpl
 import com.app.meditation.data.repository.AuthRepositoryImpl
 import com.app.meditation.data.repository.NoteRepositoryImpl
 import com.app.meditation.data.repository.PlayerRepositoryImpl
@@ -9,6 +10,7 @@ import com.app.meditation.data.repository.ServiceRepositoryImpl
 import com.app.meditation.data.repository.TuneRepositoryImpl
 import com.app.meditation.data.repository.UserRepositoryImpl
 import com.app.meditation.database.DatabaseHelper
+import com.app.meditation.domain.repository.AiRepository
 import com.app.meditation.domain.repository.AuthRepository
 import com.app.meditation.domain.repository.NoteRepository
 import com.app.meditation.domain.repository.PlayerRepository
@@ -23,6 +25,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import io.ktor.client.HttpClient
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -53,6 +56,10 @@ class RepositoryModule {
     @Provides
     fun getServiceRepository(myApp: MyApp): ServiceRepository =
         ServiceRepositoryImpl(myApp)
+
+    @Provides
+    fun getAiRepository(httpClient: HttpClient): AiRepository=
+        AiRepositoryImpl(httpClient)
 
 
 }

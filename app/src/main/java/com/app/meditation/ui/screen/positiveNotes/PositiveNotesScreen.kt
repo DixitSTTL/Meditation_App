@@ -100,11 +100,12 @@ fun PositiveNotesScreen(viewmodel: NoteViewModel = hiltViewModel()) {
 
                 Column(modifier = Modifier.padding(20.dp, 10.dp, 20.dp, 100.dp)) {
 
-                    NoteTextInput(state.title, "Enter title", minLines = 1) { str ->
+                    NoteTextInput(state.title, "Enter title", minLines = 1,Modifier) { str ->
                         viewmodel.updateTitle(str)
                     }
 
-                    NoteTextInput(state.description, "Enter description", minLines = 5) { str ->
+                    NoteTextInput(state.description, "Enter description", minLines = 5,
+                        Modifier) { str ->
                         viewmodel.updateDescription(str)
                     }
 
