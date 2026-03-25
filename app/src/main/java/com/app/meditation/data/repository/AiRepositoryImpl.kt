@@ -1,5 +1,6 @@
 package com.app.meditation.data.repository
 
+import com.app.meditation.BuildConfig
 import com.app.meditation.data.model.AiDTO
 import com.app.meditation.data.model.ModelAiChat
 import com.app.meditation.domain.repository.AiRepository
@@ -45,7 +46,7 @@ class AiRepositoryImpl(
                 appendAll(StringValues.build {
                     append(
                         "x-goog-api-key",
-                        "AIzaSyC8ZYaeTZcCOwiffsNBU_w-Zi3hOskjzEE"
+                        BuildConfig.API_KEY
                     )
 
                     append(
